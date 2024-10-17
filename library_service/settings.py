@@ -39,10 +39,11 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     # 3rd apps
-
+    "rest_framework",
     # my apps
     "library",
     "users",
+
 ]
 
 MIDDLEWARE = [
@@ -128,6 +129,7 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+AUTH_USER_MODEL = "users.User"
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=2),
