@@ -42,7 +42,7 @@ INSTALLED_APPS = [
 
     # my apps
     "library",
-    "user",
+    "users",
 ]
 
 MIDDLEWARE = [
