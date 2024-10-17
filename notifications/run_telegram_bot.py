@@ -11,8 +11,7 @@ load_dotenv()
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
 logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    level=logging.INFO
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 )
 logger = logging.getLogger(__name__)
 
@@ -46,7 +45,7 @@ async def handle_updates(bot: Bot, update_id: int) -> int:
             text_to_reply = "Sorry, can't handle it."
             if update.message.text == "/start":
                 text_to_reply = "Welcome to the DNA Library service"
-            elif update.message.text == "python":
+            elif update.message.text == "/python":
                 text_to_reply = "Better than Java!"
             logger.info(f"Received message: {update.message.text}")
             await update.message.reply_text(text_to_reply)
