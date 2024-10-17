@@ -36,7 +36,9 @@ async def start_bot() -> None:
 
 async def handle_updates(bot: Bot, update_id: int) -> int:
     updates = await bot.get_updates(
-        offset=update_id, timeout=30, allowed_updates=Update.ALL_TYPES
+        offset=update_id,
+        timeout=30,
+        allowed_updates=Update.ALL_TYPES
     )
     for update in updates:
         next_update_id = update.update_id + 1
