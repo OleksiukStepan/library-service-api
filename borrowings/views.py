@@ -9,7 +9,7 @@ from borrowings.serializers import (
 
 
 class BorrowingViewSet(ModelViewSet):
-    queryset = Borrowing.objects.select_related("user", "books")
+    queryset = Borrowing.objects.select_related("user", "book")
 
     def get_serializer_class(self):
         if self.action == "list":
