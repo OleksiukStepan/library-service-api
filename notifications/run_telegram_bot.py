@@ -3,12 +3,16 @@ import logging
 import os
 from telegram import Bot, Update
 from telegram.error import Forbidden, NetworkError
-from dotenv import load_dotenv
 
 
-load_dotenv()
 
-TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "library_service.settings")
+
+django.setup()
+
+# Logging Setup
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
