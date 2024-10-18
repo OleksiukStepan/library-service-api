@@ -98,7 +98,9 @@ async def handle_updates(bot: Bot, update_id: int) -> int:
                         "You are authenticated as an admin."
                     )
                 else:
-                    await update.message.reply_text("You don't have permissions.")
+                    await update.message.reply_text(
+                        "Invalid credentials. Please, try again."
+                    )
                     user_sessions.pop(chat_id)
 
         return next_update_id
