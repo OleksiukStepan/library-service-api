@@ -1,4 +1,4 @@
-from pip._vendor.cachecontrol.serialize import Serializer
+from rest_framework.serializers import Serializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from django.db.models import QuerySet
