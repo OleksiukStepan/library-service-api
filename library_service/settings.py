@@ -43,10 +43,10 @@ INSTALLED_APPS = [
     # 3rd apps
     "rest_framework",
     # my apps
-    "library",
     "users",
     "books",
     "borrowings",
+    "payments",
 ]
 
 MIDDLEWARE = [

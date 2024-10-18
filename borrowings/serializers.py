@@ -1,4 +1,6 @@
+from django.db import transaction
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from borrowings.models import Borrowing
 from books.serializers import BookSerializer
@@ -20,6 +22,21 @@ class BorrowingSerializer(serializers.ModelSerializer):
             "user",
         ]
         read_only_fields = ["user"]
+
+    def validate_book_inventory(self, book: Book) -> Book:
+        if book.inventory <= 0:
+            raise ValidationError("This book is currently out of stock")
+        return book
+
+    def create(self, validated_data: dict) -> Borrowing:
+        with transaction.atomic():
+            book = validated_data["book"]
+            self.validate_book_inventory(book)
+            book.inventory -= 1
+            book.save()
+            validated_data["user"] = self.context["request"].user
+
+            return super().create(validated_data)
 
 
 class BorrowingListSerializer(BorrowingSerializer):

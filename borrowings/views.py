@@ -8,6 +8,7 @@ from borrowings.serializers import (
     BorrowingDetailSerializer,
 )
 from borrowings.filters import BorrowingFilter
+from notifications.tasks import send_telegram_message
 
 
 class BorrowingViewSet(ModelViewSet):
@@ -28,4 +29,11 @@ class BorrowingViewSet(ModelViewSet):
         return BorrowingSerializer
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        borrowing = serializer.save(user=self.request.user)
+        message = (
+            f"New borrowing created (ID: {borrowing.id}):\n"
+            f"User: {borrowing.user.email}\n"
+            f"Book: {borrowing.book.title}\n"
+            f"Due Date: {borrowing.expected_return_date}"
+        )
+        send_telegram_message(message)
