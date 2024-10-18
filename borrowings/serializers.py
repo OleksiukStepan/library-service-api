@@ -39,6 +39,15 @@ class BorrowingSerializer(serializers.ModelSerializer):
             return super().create(validated_data)
 
 
+class BorrowingReturnSerializer(BorrowingSerializer):
+    class Meta:
+        model = Borrowing
+        fields = []
+
+    def return_borrowing(self) -> None:
+        self.instance.return_book()
+
+
 class BorrowingListSerializer(BorrowingSerializer):
     book = serializers.SlugRelatedField(slug_field="title", read_only=True)
     user = serializers.SlugRelatedField(slug_field="email", read_only=True)
