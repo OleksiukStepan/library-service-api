@@ -58,21 +58,48 @@ async def start_bot() -> None:
 
 async def handle_updates(bot: Bot, update_id: int) -> int:
     updates = await bot.get_updates(
-        offset=update_id,
-        timeout=30,
-        allowed_updates=Update.ALL_TYPES
+        offset=update_id, timeout=30, allowed_updates=Update.ALL_TYPES
     )
     for update in updates:
         next_update_id = update.update_id + 1
 
+        if update.message is None:
+            sleep(1)
+            continue
+
+        chat_id = update.message.chat_id
+        if chat_id not in user_sessions:
+            user_sessions[chat_id] = {"state": "waiting_for_start"}
+        session = user_sessions[chat_id]
+
         if update.message and update.message.text:
-            text_to_reply = "Sorry, can't handle it."
-            if update.message.text == "/start":
-                text_to_reply = "Welcome to the DNA Library service"
-            elif update.message.text == "/python":
-                text_to_reply = "Better than Java!"
-            logger.info(f"Received message: {update.message.text}")
-            await update.message.reply_text(text_to_reply)
+
+            text = update.message.text
+
+            logger.info(f"Received message: {text} from chat {chat_id}")
+
+            if session["state"] == "waiting_for_start" and text == "/start":
+                await update.message.reply_text("Please enter your email:")
+                session["state"] = "waiting_for_email"
+
+            elif session["state"] == "waiting_for_email":
+                session["email"] = text
+                await update.message.reply_text("Please enter your password:")
+                session["state"] = "waiting_for_password"
+
+            elif session["state"] == "waiting_for_password":
+                session["password"] = text
+                if await authenticate_admin(
+                    session["email"], session["password"], chat_id
+                ):
+                    session["is_authenticated"] = True
+                    del session["password"]
+                    await update.message.reply_text(
+                        "You are authenticated as an admin."
+                    )
+                else:
+                    await update.message.reply_text("You don't have permissions.")
+                    user_sessions.pop(chat_id)
 
         return next_update_id
     return update_id
