@@ -48,6 +48,7 @@ INSTALLED_APPS = [
 
     # 3rd apps
     "rest_framework",
+
     # my apps
     "users",
     "books",
@@ -160,3 +161,16 @@ AUTH_USER_MODEL = "users.User"
 # Telegram Notifications Service
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+
+
+# Celery Configuration Options
+
+CELERY_BROKER_URL = "redis://redis:6379"
+
+CELERY_RESULT_BACKEND = "redis://redis:6379"
+
+CELERY_TIMEZONE = "Europe/Kyiv"
+
+CELERY_TASK_TRACK_STARTED = True
+
+CELERY_TASK_TIME_LIMIT = 30 * 60
