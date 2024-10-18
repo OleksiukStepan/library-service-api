@@ -1,10 +1,18 @@
 import asyncio
 import logging
 import os
+import sys
+from time import sleep
+
+import django
+from asgiref.sync import sync_to_async
+from django.conf import settings
+from django.contrib.auth import authenticate
 from telegram import Bot, Update
 from telegram.error import Forbidden, NetworkError
 
 
+# Django Setup
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -17,6 +25,7 @@ django.setup()
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 )
+
 logger = logging.getLogger(__name__)
 
 
@@ -30,9 +39,9 @@ user_sessions = {}
 
 
 async def start_bot() -> None:
-    async with Bot(TELEGRAM_BOT_TOKEN) as bot:
+    async with BOT:
         try:
-            update_id = (await bot.get_updates())[0].update_id
+            update_id = (await BOT.get_updates())[0].update_id
         except IndexError:
             update_id = None
 
@@ -40,7 +49,7 @@ async def start_bot() -> None:
 
         while True:
             try:
-                update_id = await handle_updates(bot, update_id)
+                update_id = await handle_updates(BOT, update_id)
             except NetworkError:
                 await asyncio.sleep(1)
             except Forbidden:
