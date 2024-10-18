@@ -36,7 +36,14 @@ class BorrowingViewSet(ModelViewSet):
             return Borrowing.objects.select_related("user", "book")
         return Borrowing.objects.select_related("user", "book").filter(user=user)
 
-    def perform_create(self, serializer) -> None:
+    def get_serializer_class(self) -> type(Serializer):
+        if self.action == "list":
+            return BorrowingListSerializer
+        elif self.action == "retrieve":
+            return BorrowingDetailSerializer
+        return BorrowingSerializer
+
+    def perform_create(self, serializer):
         """
         Saves a new borrowing, setting the user to the currently authenticated user.
         Sends a notification to Telegram about the new borrowing.
