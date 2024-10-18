@@ -1,4 +1,5 @@
 from decimal import Decimal
+from unittest.mock import patch
 
 from django.test import TestCase, RequestFactory
 from rest_framework.test import APIClient
@@ -14,13 +15,14 @@ from borrowings.serializers import (
     BorrowingDetailSerializer,
 )
 
-
 User = get_user_model()
 
 
 class BorrowingSerializerTests(TestCase):
 
-    def setUp(self):
+    @patch("notifications.tasks.send_telegram_message", autospec=True)
+    @patch("notifications.run_telegram_bot.Bot", autospec=True)
+    def setUp(self, mock_bot, mock_send_telegram_message):
         self.client = APIClient()
         self.factory = RequestFactory()
         self.user = User.objects.create_user(
@@ -56,7 +58,11 @@ class BorrowingSerializerTests(TestCase):
             },
         )
 
-    def test_borrowing_serializer_validation(self):
+    @patch("notifications.tasks.send_telegram_message", autospec=True)
+    @patch("notifications.run_telegram_bot.Bot", autospec=True)
+    def test_borrowing_serializer_validation(
+        self, mock_bot, mock_send_telegram_message
+    ):
         with self.assertRaises(ValidationError):
             self.book.inventory = 0
             self.book.save()
@@ -65,7 +71,9 @@ class BorrowingSerializerTests(TestCase):
             )
             serializer.is_valid(raise_exception=True)
 
-    def test_borrowing_serializer_create(self):
+    @patch("notifications.tasks.send_telegram_message", autospec=True)
+    @patch("notifications.run_telegram_bot.Bot", autospec=True)
+    def test_borrowing_serializer_create(self, mock_bot, mock_send_telegram_message):
         data = {
             "book": self.book.id,
             "borrow_date": "2023-01-01",
@@ -78,11 +86,15 @@ class BorrowingSerializerTests(TestCase):
         borrowing = serializer.save()
         self.assertEqual(borrowing.book.inventory, 9)
 
-    def test_borrowing_return_serializer(self):
+    @patch("notifications.tasks.send_telegram_message", autospec=True)
+    @patch("notifications.run_telegram_bot.Bot", autospec=True)
+    def test_borrowing_return_serializer(self, mock_bot, mock_send_telegram_message):
         serializer = BorrowingReturnSerializer(instance=self.borrowing)
         self.assertEqual(serializer.data, {})
 
-    def test_borrowing_list_serializer(self):
+    @patch("notifications.tasks.send_telegram_message", autospec=True)
+    @patch("notifications.run_telegram_bot.Bot", autospec=True)
+    def test_borrowing_list_serializer(self, mock_bot, mock_send_telegram_message):
         serializer = BorrowingListSerializer(instance=self.borrowing)
         data = serializer.data
         self.assertEqual(
@@ -97,7 +109,9 @@ class BorrowingSerializerTests(TestCase):
             },
         )
 
-    def test_borrowing_detail_serializer(self):
+    @patch("notifications.tasks.send_telegram_message", autospec=True)
+    @patch("notifications.run_telegram_bot.Bot", autospec=True)
+    def test_borrowing_detail_serializer(self, mock_bot, mock_send_telegram_message):
         serializer = BorrowingDetailSerializer(instance=self.borrowing)
         data = serializer.data
         self.assertEqual(
