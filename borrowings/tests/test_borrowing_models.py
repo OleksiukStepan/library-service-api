@@ -2,12 +2,14 @@ from unittest.mock import patch
 
 from django.test import TestCase
 from django.utils import timezone
+from django.contrib.auth import get_user_model
 from rest_framework.exceptions import ValidationError
 
 from books.models import Book
-from users.models import User
 from borrowings.models import Borrowing
 
+
+User = get_user_model()
 
 class BorrowingModelTest(TestCase):
     @patch("notifications.tasks.send_telegram_message", autospec=True)
