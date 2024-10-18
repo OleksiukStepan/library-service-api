@@ -7,10 +7,12 @@ from borrowings.serializers import (
     BorrowingListSerializer,
     BorrowingDetailSerializer,
 )
+from borrowings.filters import BorrowingFilter
 
 
 class BorrowingViewSet(ModelViewSet):
     permission_classes = (IsAuthenticated,)
+    filterset_class = BorrowingFilter
 
     def get_queryset(self):
         user = self.request.user
