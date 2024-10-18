@@ -20,6 +20,15 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+# Bot Setup
+BOT = Bot(token=settings.TELEGRAM_BOT_TOKEN)
+
+
+# Sessions Setup
+
+user_sessions = {}
+
+
 async def start_bot() -> None:
     async with Bot(TELEGRAM_BOT_TOKEN) as bot:
         try:
