@@ -105,5 +105,16 @@ async def handle_updates(bot: Bot, update_id: int) -> int:
     return update_id
 
 
+@sync_to_async
+def authenticate_admin(email: str, password: str, telegram_chat_id: int) -> bool:
+    user = authenticate(username=email, password=password)
+
+    if user and user.is_staff:
+        user.telegram_chat_id = telegram_chat_id
+        user.save()
+
+    return user and user.is_staff
+
+
 if __name__ == "__main__":
     asyncio.run(start_bot())
