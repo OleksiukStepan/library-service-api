@@ -1,0 +1,27 @@
+services:
+  library_service:
+    build:
+      context: .
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/app
+    command: >
+      sh -c "python notifications/run_telegram_bot.py &&
+            python manage.py runserver 0.0.0.0:8000"
+
+  celery:
+    build:
+      context: .
+    command: >
+      sh -c "celery -A library_service worker --loglevel=info"
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:latest
+    expose:
+      - 6379
+    restart: always
