@@ -1,32 +1,33 @@
 from decimal import Decimal
-from unittest.mock import patch
 
-from django.test import TestCase, RequestFactory
+from django.test import TestCase
+from rest_framework import status
 from rest_framework.test import APIClient
-from rest_framework.exceptions import ValidationError
+from django.urls import reverse
+from django.utils import timezone
 from django.contrib.auth import get_user_model
 
 from borrowings.models import Borrowing
 from books.models import Book
-from borrowings.serializers import (
-    BorrowingSerializer,
-    BorrowingReturnSerializer,
-    BorrowingListSerializer,
-    BorrowingDetailSerializer,
-)
+
 
 User = get_user_model()
 
 
-class BorrowingSerializerTests(TestCase):
-
-    @patch("notifications.tasks.send_telegram_message", autospec=True)
-    @patch("notifications.run_telegram_bot.Bot", autospec=True)
-    def setUp(self, mock_bot, mock_send_telegram_message):
+class BorrowingViewSetTest(TestCase):
+    def setUp(self):
         self.client = APIClient()
-        self.factory = RequestFactory()
         self.user = User.objects.create_user(
-            email="test@example.com", password="testpassword"
+            first_name="first_name",
+            last_name="last_name",
+            email="test@example.com",
+            password="testpassword",
+        )
+        self.admin = User.objects.create_superuser(
+            first_name="first_admin_name",
+            last_name="last_admin_name",
+            email="admin@example.com",
+            password="adminpassword"
         )
         self.book = Book.objects.create(
             title="Test Book",
@@ -34,94 +35,67 @@ class BorrowingSerializerTests(TestCase):
             cover=Book.CoverType.SOFT,
             inventory=10,
             daily_fee=Decimal("1.99"),
-            image=None,
         )
         self.borrowing = Borrowing.objects.create(
             user=self.user,
             book=self.book,
-            borrow_date="2023-01-01",
-            expected_return_date="2023-02-01",
+            borrow_date=timezone.now().date(),
+            expected_return_date=timezone.now().date() + timezone.timedelta(days=10),
+        )
+        self.url_list = reverse("borrowings:borrowings-list")
+        self.url_detail = reverse(
+            "borrowings:borrowings-detail", args=[self.borrowing.id]
+        )
+        self.url_return = reverse(
+            "borrowings:borrowings-return-borrowing", args=[self.borrowing.id]
         )
 
-    def test_borrowing_serializer(self):
-        serializer = BorrowingSerializer(instance=self.borrowing)
-        data = serializer.data
-        self.assertEqual(
-            set(data.keys()),
-            {
-                "id",
-                "borrow_date",
-                "expected_return_date",
-                "actual_return_date",
-                "book",
-                "user",
-            },
-        )
+    def test_get_borrowing_list(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.url_list)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["id"], self.borrowing.id)
 
-    @patch("notifications.tasks.send_telegram_message", autospec=True)
-    @patch("notifications.run_telegram_bot.Bot", autospec=True)
-    def test_borrowing_serializer_validation(
-        self, mock_bot, mock_send_telegram_message
-    ):
-        with self.assertRaises(ValidationError):
-            self.book.inventory = 0
-            self.book.save()
-            serializer = BorrowingSerializer(
-                data={"book": self.book.id, "user": self.user.id}
-            )
-            serializer.is_valid(raise_exception=True)
+    def test_get_borrowing_detail(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.url_detail)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["id"], self.borrowing.id)
 
-    @patch("notifications.tasks.send_telegram_message", autospec=True)
-    @patch("notifications.run_telegram_bot.Bot", autospec=True)
-    def test_borrowing_serializer_create(self, mock_bot, mock_send_telegram_message):
+
+    def test_create_borrowing(self):
+        self.client.force_authenticate(user=self.user)
         data = {
             "book": self.book.id,
-            "borrow_date": "2023-01-01",
-            "expected_return_date": "2023-02-01",
+            "borrow_date": timezone.now().date(),
+            "expected_return_date": timezone.now().date() + timezone.timedelta(days=10),
         }
-        request = self.factory.post("/api/borrowings/", data, format="json")
-        request.user = self.user
-        serializer = BorrowingSerializer(data=data, context={"request": request})
-        self.assertTrue(serializer.is_valid())
-        borrowing = serializer.save()
-        self.assertEqual(borrowing.book.inventory, 9)
+        response = self.client.post(self.url_list, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.book.refresh_from_db()
+        self.assertEqual(self.book.inventory, 9)  # Inventory should decrease
 
-    @patch("notifications.tasks.send_telegram_message", autospec=True)
-    @patch("notifications.run_telegram_bot.Bot", autospec=True)
-    def test_borrowing_return_serializer(self, mock_bot, mock_send_telegram_message):
-        serializer = BorrowingReturnSerializer(instance=self.borrowing)
-        self.assertEqual(serializer.data, {})
+    def test_return_borrowing_success(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.post(self.url_return)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.borrowing.refresh_from_db()
+        self.assertIsNotNone(self.borrowing.actual_return_date)
+        self.book.refresh_from_db()
+        self.assertEqual(self.book.inventory, 11)  # Inventory should increase
 
-    @patch("notifications.tasks.send_telegram_message", autospec=True)
-    @patch("notifications.run_telegram_bot.Bot", autospec=True)
-    def test_borrowing_list_serializer(self, mock_bot, mock_send_telegram_message):
-        serializer = BorrowingListSerializer(instance=self.borrowing)
-        data = serializer.data
-        self.assertEqual(
-            set(data.keys()),
-            {
-                "id",
-                "borrow_date",
-                "expected_return_date",
-                "actual_return_date",
-                "book",
-                "user",
-            },
-        )
+    def test_return_borrowing_already_returned(self):
+        self.client.force_authenticate(user=self.user)
+        self.borrowing.actual_return_date = timezone.now().date()
+        self.borrowing.save()
+        response = self.client.post(self.url_return)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("error", response.data)
+        self.assertEqual(response.data["error"], "This book has already been returned")
 
-    @patch("notifications.tasks.send_telegram_message", autospec=True)
-    @patch("notifications.run_telegram_bot.Bot", autospec=True)
-    def test_borrowing_detail_serializer(self, mock_bot, mock_send_telegram_message):
-        serializer = BorrowingDetailSerializer(instance=self.borrowing)
-        data = serializer.data
-        self.assertEqual(
-            set(data.keys()),
-            {
-                "id",
-                "borrow_date",
-                "expected_return_date",
-                "actual_return_date",
-                "book",
-                "user",
-            },
-        )
+    def test_admin_can_see_all_borrowings(self):
+        self.client.force_authenticate(user=self.admin)
+        response = self.client.get(self.url_list)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)  # Admin sees all borrowings
