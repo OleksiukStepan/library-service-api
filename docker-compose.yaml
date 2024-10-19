@@ -27,6 +27,8 @@ services:
   celery:
     build:
       context: .
+    volumes:
+      - ./:/app
     command: >
       sh -c "celery -A library_service worker --loglevel=info"
     depends_on:
