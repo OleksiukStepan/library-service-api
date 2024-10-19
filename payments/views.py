@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from notifications.tasks import send_telegram_message
 from payments.models import Payment
 from payments.serializers import PaymentUserSerializer, PaymentStaffSerializer
 
@@ -24,6 +25,7 @@ class PaymentViewSet(viewsets.ReadOnlyModelViewSet):
             return PaymentStaffSerializer
         return PaymentUserSerializer
 
+
 class PaymentSuccessView(APIView):
     def get(self, request):
         session_id = request.query_params.get("session_id")
@@ -33,6 +35,13 @@ class PaymentSuccessView(APIView):
         if session.payment_status == "paid":
             payment.status = Payment.Status.PAID
             payment.save()
+            message = (
+                f"{payment.get_type_display()} for borrowing "
+                f"(ID: {payment.borrowing.id}):\n"
+                f"Amount: $ {payment.money_to_pay}\n"
+                f"User: {payment.borrowing.user.email}"
+            )
+            send_telegram_message(message)
 
             return Response({"message": "Payment successful"}, status=200)
         else:
