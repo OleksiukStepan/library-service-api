@@ -2,6 +2,7 @@ from django.db import transaction
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+from django.utils import timezone
 
 from books.models import Book
 from books.serializers import BookSerializer
@@ -37,6 +38,15 @@ class BorrowingSerializer(serializers.ModelSerializer):
         if Borrowing.objects.filter(user=user, payments__status=Payment.Status.PENDING).exists():
             raise ValidationError("You cannot borrow a new book until pending payments are resolved")
 
+    def validate_borrowings_date(self, borrow_date, expected_return_date) -> None:
+        today = timezone.now().date()
+
+        if borrow_date < today:
+            raise ValidationError("Borrowing cannot be created for past dates")
+
+        if expected_return_date < borrow_date:
+            raise ValidationError("Expected return date cannot be earlier than borrow date")
+
     def create(self, validated_data: dict) -> Borrowing:
         with transaction.atomic():
 
@@ -45,6 +55,11 @@ class BorrowingSerializer(serializers.ModelSerializer):
 
             user = self.context["request"].user
             self.validate_if_pending_exist(user)
+
+            self.validate_borrowings_date(
+                validated_data["borrow_date"],
+                validated_data["expected_return_date"]
+            )
 
             book.inventory -= 1
             book.save()
