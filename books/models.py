@@ -30,6 +30,8 @@ class Book(models.Model):
     )
     image = models.ImageField(upload_to=books_image_file_path, null=True, blank=True)
 
+    class Meta:
+        ordering = ["title", "author"]
 
     def __str__(self):
         return f"{self.title} by {self.author}"

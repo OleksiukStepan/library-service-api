@@ -7,6 +7,7 @@ from books.serializers import BookSerializer
 
 
 class BookViewSet(viewsets.ModelViewSet):
+    """API viewset for managing books. Provides CRUD operations and filtering."""
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = (IsAdminOrReadOnly,)
