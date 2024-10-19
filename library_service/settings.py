@@ -17,6 +17,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from rest_framework import authentication
 
+
 load_dotenv()
 
 # Indicator that the .env file has been loaded or not
@@ -56,6 +57,8 @@ INSTALLED_APPS = [
 
     # 3rd apps
     "rest_framework",
+    "django_celery_beat",
+    "drf_spectacular",
     # my apps
     "users",
     "books",
@@ -181,6 +184,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 SIMPLE_JWT = {
@@ -189,7 +193,36 @@ SIMPLE_JWT = {
     "ROTATE_REFRESH_TOKENS": False,
 }
 
+# Spectacular settings
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Library API",
+    "DESCRIPTION": "Borrow books",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SWAGGER_UI_SETTINGS": {
+        "deepLinking": True,
+        "defaultModelRendering": "model",
+        "defaultModelsExpandDepth": 2,
+        "defaultModelExpandDepth": 2,
+    },
+}
+
+
 # Telegram Notifications Service
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")
+
+
+# Celery Configuration Options
+
+CELERY_BROKER_URL = "redis://redis:6379"
+
+CELERY_RESULT_BACKEND = "redis://redis:6379"
+
+CELERY_TIMEZONE = "Europe/Kyiv"
+
+CELERY_TASK_TRACK_STARTED = True
+
+CELERY_TASK_TIME_LIMIT = 30 * 60
