@@ -8,6 +8,7 @@ from rest_framework.serializers import ModelSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from django.db.models import QuerySet
+from django_filters.rest_framework import DjangoFilterBackend
 
 from borrowings.models import Borrowing
 from borrowings.serializers import (
@@ -30,6 +31,7 @@ class BorrowingViewSet(ModelViewSet):
     """
     permission_classes = [IsAuthenticated]
     filterset_class = BorrowingFilter
+    filter_backends = [DjangoFilterBackend]
 
     def get_queryset(self) -> QuerySet:
         """
