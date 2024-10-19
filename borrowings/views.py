@@ -4,10 +4,10 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import ModelSerializer
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
 from borrowings.models import Borrowing
+from borrowings.permissions import IsAdminOrIfAuthenticatedReadOnly
 from borrowings.serializers import (
     BorrowingSerializer,
     BorrowingListSerializer,
@@ -20,7 +20,7 @@ from payments.stripe_helpers import create_stripe_session
 
 
 class BorrowingViewSet(ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
     filterset_class = BorrowingFilter
 
     def get_queryset(self):
