@@ -9,8 +9,8 @@ services:
     volumes:
       - ./:/app
     command: >
-      sh -c "python notifications/run_telegram_bot.py &&
       sh -c "python manage.py migrate &&
+            python manage.py create_crontab_schedule &&
             python manage.py runserver 0.0.0.0:8000"
 
   telegram_bot:
