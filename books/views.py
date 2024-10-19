@@ -1,3 +1,4 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from books.models import Book
 from books.ordering import BookOrdering
@@ -13,6 +14,7 @@ class BookViewSet(viewsets.ModelViewSet):
     serializer_class = BookSerializer
     permission_classes = [IsAdminOrReadOnly]
     filterset_class = BookFilter
+    filter_backends = [DjangoFilterBackend]
     ordering_fields = ["title", "author"]
 
     @extend_schema(

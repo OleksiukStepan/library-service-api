@@ -24,15 +24,8 @@ class PublicBookApiTests(TestCase):
         """Set up the API client for tests."""
         self.client = APIClient()
 
-    def test_retrieve_books(self) -> None:
-        """Test retrieving a list of books."""
-        Book.objects.create(
-            title="Harry Potter",
-            author="J.K. Rowling",
-            cover=Book.CoverType.HARD,
-            inventory=5,
-            daily_fee=Decimal("1.50"),
-        )
+    def test_retrieve_books_ordered_by_title(self) -> None:
+        """Test retrieving a list of books ordered by title."""
         Book.objects.create(
             title="The Hobbit",
             author="J.R.R. Tolkien",
@@ -40,11 +33,19 @@ class PublicBookApiTests(TestCase):
             inventory=10,
             daily_fee=Decimal("2.00"),
         )
+        Book.objects.create(
+            title="Harry Potter",
+            author="J.K. Rowling",
+            cover=Book.CoverType.HARD,
+            inventory=5,
+            daily_fee=Decimal("1.50"),
+        )
 
-        res = self.client.get(BOOKS_URL)
+        res = self.client.get(f"{BOOKS_URL}?ordering=title")
 
-        books = Book.objects.all().order_by("id")
+        books = Book.objects.all().order_by("title")
         serializer = BookSerializer(books, many=True)
+
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
 
@@ -107,7 +108,7 @@ class PublicBookApiTests(TestCase):
         }
         res = self.client.post(BOOKS_URL, payload)
 
-        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertFalse(Book.objects.filter(title="Unauthorized Book").exists())
 
 class AdminBookApiTests(TestCase):

@@ -64,7 +64,7 @@ async def handle_updates(bot: Bot, update_id: int) -> int:
         next_update_id = update.update_id + 1
 
         if update.message is None:
-            sleep(1)
+            sleep(10)
             continue
 
         chat_id = update.message.chat_id
