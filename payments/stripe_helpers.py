@@ -3,8 +3,10 @@ from decimal import Decimal
 import stripe
 from django.conf import settings
 from django.urls import reverse
+from rest_framework.request import Request
 
 from payments.models import Payment
+
 
 stripe.api_key = settings.STRIPE_API_KEY
 
@@ -57,4 +59,32 @@ def create_stripe_session(borrowing, request):
         session_id=session.id,
         money_to_pay=total_price,
     )
+    payment.save()
+
+
+def renew_stripe_session(payment: Payment, request: Request):
+    session = stripe.checkout.Session.create(
+        payment_method_types=["card"],
+        line_items=[
+            {
+                "price_data": {
+                    "currency": "usd",
+                    "product_data": {
+                        "name": payment.borrowing.book.title,
+                    },
+                    "unit_amount": int(payment.money_to_pay * 100),
+                },
+                "quantity": 1,
+            }
+        ],
+        mode="payment",
+        success_url=(
+            request.build_absolute_uri(reverse("payments:payment-success"))
+            + "?session_id={CHECKOUT_SESSION_ID}"
+        ),
+        cancel_url=request.build_absolute_uri(reverse("payments:payment-cancel")),
+    )
+    payment.status = Payment.Status.PENDING
+    payment.session_url = session.url
+    payment.session_id = session.id
     payment.save()
