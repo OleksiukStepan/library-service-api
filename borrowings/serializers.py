@@ -49,13 +49,11 @@ class BorrowingSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data: dict) -> Borrowing:
         with transaction.atomic():
-
             book = validated_data["book"]
-            self.validate_book_inventory(book)
-
             user = self.context["request"].user
-            self.validate_if_pending_exist(user)
 
+            self.validate_book_inventory(book)
+            self.validate_if_pending_exist(user)
             self.validate_borrowings_date(
                 validated_data["borrow_date"],
                 validated_data["expected_return_date"]
@@ -63,7 +61,7 @@ class BorrowingSerializer(serializers.ModelSerializer):
 
             book.inventory -= 1
             book.save()
-            validated_data["user"] = self.context["request"].user
+            validated_data["user"] = user
 
             return super().create(validated_data)
 
