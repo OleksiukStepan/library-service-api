@@ -2,14 +2,18 @@ from django.db import transaction
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from borrowings.models import Borrowing
-from books.serializers import BookSerializer
-from users.serializers import UserSerializer
 from books.models import Book
+from books.serializers import BookSerializer
+from borrowings.models import Borrowing
+from payments.serializers import PaymentUserSerializer
+from users.serializers import UserSerializer
 
 
 class BorrowingSerializer(serializers.ModelSerializer):
     book = serializers.PrimaryKeyRelatedField(queryset=Book.objects.all())
+    payments = PaymentUserSerializer(
+        many=True, read_only=True, allow_null=True,
+    )
 
     class Meta:
         model = Borrowing
@@ -20,8 +24,9 @@ class BorrowingSerializer(serializers.ModelSerializer):
             "actual_return_date",
             "book",
             "user",
+            "payments"
         ]
-        read_only_fields = ["user"]
+        read_only_fields = ["user", "actual_return_date"]
 
     def validate_book_inventory(self, book: Book) -> Book:
         if book.inventory <= 0:
@@ -56,3 +61,12 @@ class BorrowingListSerializer(BorrowingSerializer):
 class BorrowingDetailSerializer(BorrowingSerializer):
     book = BookSerializer(read_only=True)
     user = UserSerializer(read_only=True)
+
+    class Meta(BorrowingSerializer.Meta):
+        read_only_fields = [
+            "user",
+            "actual_return_date",
+            "expected_return_date",
+            "borrow_date",
+            "book",
+        ]

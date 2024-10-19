@@ -19,6 +19,7 @@ from borrowings.serializers import (
 )
 from borrowings.filters import BorrowingFilter
 from notifications.tasks import send_telegram_message
+from payments.stripe_helpers import create_stripe_session
 
 
 class BorrowingViewSet(ModelViewSet):
@@ -70,6 +71,7 @@ class BorrowingViewSet(ModelViewSet):
             f"Book: {borrowing.book.title}\n"
             f"Due Date: {borrowing.expected_return_date}"
         )
+        create_stripe_session(borrowing, self.request)
         send_telegram_message(message)
 
     @action(detail=True, methods=["POST"])
@@ -81,6 +83,7 @@ class BorrowingViewSet(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         try:
             serializer.return_borrowing()
+            create_stripe_session(borrowing, request)
             return Response({"message": "The book was successfully returned"})
         except ValidationError:
             return Response(
