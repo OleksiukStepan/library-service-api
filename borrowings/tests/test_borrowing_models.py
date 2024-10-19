@@ -12,9 +12,7 @@ from borrowings.models import Borrowing
 User = get_user_model()
 
 class BorrowingModelTest(TestCase):
-    @patch("notifications.tasks.send_telegram_message", autospec=True)
-    @patch("notifications.run_telegram_bot.Bot", autospec=True)
-    def setUp(self, mock_send_telegram_message, mock_bot):
+    def setUp(self):
         self.user = User.objects.create_user(
             first_name="test_name",
             last_name="test_surname",
@@ -35,14 +33,12 @@ class BorrowingModelTest(TestCase):
             user=self.user,
         )
 
-    @patch("notifications.tasks.send_telegram_message")
-    def test_return_book_success(self, mock_send_telegram_message):
+    def test_return_book_success(self):
         self.borrowing.return_book()
         self.assertIsNotNone(self.borrowing.actual_return_date)
         self.assertEqual(self.book.inventory, 11)
 
-    @patch("notifications.tasks.send_telegram_message")
-    def test_return_book_already_returned(self, mock_send_telegram_message):
+    def test_return_book_already_returned(self):
         self.borrowing.actual_return_date = timezone.now().date()
         self.borrowing.save()
         with self.assertRaises(ValidationError):
