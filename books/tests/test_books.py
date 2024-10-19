@@ -13,17 +13,19 @@ from django.urls import reverse
 
 BOOKS_URL = reverse("books:book-list")
 
-
-def detail_url(book_id):
+def detail_url(book_id: int) -> str:
+    """Returns the detail URL for a book."""
     return reverse("books:book-detail", args=[book_id])
 
-
 class PublicBookApiTests(TestCase):
+    """Tests for public access to the book API."""
 
-    def setUp(self):
+    def setUp(self) -> None:
+        """Set up the API client for tests."""
         self.client = APIClient()
 
-    def test_retrieve_books(self):
+    def test_retrieve_books(self) -> None:
+        """Test retrieving a list of books."""
         Book.objects.create(
             title="Harry Potter",
             author="J.K. Rowling",
@@ -46,7 +48,8 @@ class PublicBookApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
 
-    def test_filter_books_by_title(self):
+    def test_filter_books_by_title(self) -> None:
+        """Test filtering books by title."""
         book1 = Book.objects.create(
             title="Harry Potter",
             author="J.K. Rowling",
@@ -69,7 +72,8 @@ class PublicBookApiTests(TestCase):
         self.assertIn(serializer1.data, res.data)
         self.assertNotIn(serializer2.data, res.data)
 
-    def test_filter_books_by_author(self):
+    def test_filter_books_by_author(self) -> None:
+        """Test filtering books by author."""
         book1 = Book.objects.create(
             title="Harry Potter",
             author="J.K. Rowling",
@@ -92,10 +96,25 @@ class PublicBookApiTests(TestCase):
         self.assertNotIn(serializer1.data, res.data)
         self.assertIn(serializer2.data, res.data)
 
+    def test_create_book_unauthorized(self) -> None:
+        """Test creating a book when unauthorized."""
+        payload = {
+            "title": "Unauthorized Book",
+            "author": "Unauthorized Author",
+            "cover": Book.CoverType.HARD,
+            "inventory": 5,
+            "daily_fee": Decimal("1.50"),
+        }
+        res = self.client.post(BOOKS_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertFalse(Book.objects.filter(title="Unauthorized Book").exists())
 
 class AdminBookApiTests(TestCase):
+    """Tests for admin access to the book API."""
 
-    def setUp(self):
+    def setUp(self) -> None:
+        """Set up the API client and admin user for tests."""
         self.client = APIClient()
         self.admin_user = get_user_model().objects.create_superuser(
             email="admin@example.com",
@@ -111,13 +130,15 @@ class AdminBookApiTests(TestCase):
         )
         self.book_url = f"/api/books/{self.book.id}/"
 
-    def tearDown(self):
+    def tearDown(self) -> None:
+        """Clean up after tests."""
         books = Book.objects.all()
         for book in books:
             if book.image:
                 book.image.delete(save=False)
 
-    def test_create_book(self):
+    def test_create_book(self) -> None:
+        """Test creating a new book."""
         payload = {
             "title": "New Book",
             "author": "Author Name",
@@ -132,7 +153,8 @@ class AdminBookApiTests(TestCase):
         for key in payload.keys():
             self.assertEqual(getattr(book, key), payload[key])
 
-    def test_create_book_with_image(self):
+    def test_create_book_with_image(self) -> None:
+        """Test creating a new book with an image."""
         image = Image.new("RGB", (100, 100), color=(255, 0, 0))
         image_file = io.BytesIO()
         image.save(image_file, format="JPEG")
@@ -154,7 +176,8 @@ class AdminBookApiTests(TestCase):
         res = self.client.post(BOOKS_URL, payload)
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
 
-    def test_delete_book(self):
+    def test_delete_book(self) -> None:
+        """Test deleting a book."""
         response = self.client.get(self.book_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
