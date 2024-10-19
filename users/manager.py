@@ -2,9 +2,13 @@ from django.contrib.auth.models import BaseUserManager, AbstractUser
 
 
 class UserManager(BaseUserManager):
+    """Custom manager for User model with email as the unique identifier."""
+
     use_in_migrations = True
 
     def _create_user(self, email: str, password: str, **extra_fields) -> AbstractUser:
+        """Creates and saves a User with the given email and password."""
+
         if not email:
             raise ValueError("Users must have an email address")
         email = self.normalize_email(email)
@@ -14,6 +18,8 @@ class UserManager(BaseUserManager):
         return user
 
     def create_user(self, email: str, password: str, **extra_fields) -> AbstractUser:
+        """Creates and saves a regular user (non-superuser)."""
+
         extra_fields.setdefault("is_superuser", False)
         extra_fields.setdefault("is_staff", False)
         return self._create_user(email, password, **extra_fields)
@@ -21,6 +27,8 @@ class UserManager(BaseUserManager):
     def create_superuser(
         self, email: str, password: str, **extra_fields
     ) -> AbstractUser:
+        """Creates and saves a superuser with required permissions."""
+
         extra_fields.setdefault("is_superuser", True)
         extra_fields.setdefault("is_staff", True)
 
