@@ -58,7 +58,8 @@ class PaymentSuccessView(APIView):
             )
         else:
             return Response(
-                {"message": "Payment not completed"}, status=status.HTTP_400_BAD_REQUEST
+                {"message": "Payment not completed"},
+                status=status.HTTP_400_BAD_REQUEST
             )
 
 
@@ -66,14 +67,16 @@ class PaymentCancelView(APIView):
     """
     Handle payment cancellations.
 
-    This view returns a message to inform the user that their payment was cancelled.
-    It indicates that the user can attempt to complete the payment again within 24 hours.
+    This view returns a message to inform the user that their payment was
+    cancelled. It indicates that the user can attempt to complete the
+    payment again within 24 hours.
 
-    Responses:
-    - 200 OK: Confirms that the payment was cancelled and provides a message.
     """
     def get(self, request):
         return Response(
-            {"message": "Payment was cancelled. You can try again within 24 hours."},
+            {
+                "message": "Payment was cancelled. "
+                           "You can try again within 24 hours."
+            },
             status=status.HTTP_200_OK,
         )
