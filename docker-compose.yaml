@@ -12,6 +12,10 @@ services:
       sh -c "python manage.py migrate &&
             python manage.py create_crontab_schedule &&
             python manage.py runserver 0.0.0.0:8000"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8000" ]
+      interval: 10s
+      retries: 5
 
   telegram_bot:
     build:
@@ -40,6 +44,8 @@ services:
     expose:
       - 6379
     restart: always
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
 
   celery-beat:
     build:
@@ -47,6 +53,8 @@ services:
     volumes:
       - ./:/app
     command: >
-      sh -c "celery -A library_service beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler"
+      sh -c "sleep 30 &&
+            celery -A library_service beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler"
     depends_on:
       - redis
+      - library_service
