@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -6,6 +7,10 @@ from books.models import Book
 from books.serializers import BookSerializer
 from borrowings.models import Borrowing
 from users.serializers import UserSerializer
+from payments.models import Payment
+
+
+User = get_user_model()
 
 
 class BorrowingSerializer(serializers.ModelSerializer):
@@ -28,10 +33,19 @@ class BorrowingSerializer(serializers.ModelSerializer):
             raise ValidationError("This book is currently out of stock")
         return book
 
+    def validate_if_pending_exist(self, user: User) -> None:
+        if Borrowing.objects.filter(user=user, payments__status=Payment.Status.PENDING).exists():
+            raise ValidationError("You cannot borrow a new book until pending payments are resolved")
+
     def create(self, validated_data: dict) -> Borrowing:
         with transaction.atomic():
+
             book = validated_data["book"]
             self.validate_book_inventory(book)
+
+            user = self.context["request"].user
+            self.validate_if_pending_exist(user)
+
             book.inventory -= 1
             book.save()
             validated_data["user"] = self.context["request"].user
