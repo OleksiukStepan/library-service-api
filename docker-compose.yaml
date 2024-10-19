@@ -12,6 +12,7 @@ services:
       sh -c "python manage.py wait_for_db &&
             python manage.py migrate &&
             python manage.py create_crontab_schedule &&
+            python manage.py create_interval_schedule &&
             python manage.py runserver 0.0.0.0:8000"
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8000" ]
