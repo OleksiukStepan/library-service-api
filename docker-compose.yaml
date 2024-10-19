@@ -73,7 +73,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - my_db:$PG_DATA
+      - my_db:$PGDATA
 
 volumes:
   my_db:
