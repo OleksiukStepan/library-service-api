@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     # 3rd apps
     "rest_framework",
     "django_celery_beat",
+    "drf_spectacular",
     # my apps
     "users",
     "books",
