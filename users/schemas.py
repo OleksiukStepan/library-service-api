@@ -4,6 +4,8 @@ from drf_spectacular.utils import (
 
 
 class UserSchema:
+    """Schema definitions for user-related operations."""
+
     create = extend_schema(
         responses={201: "User created successfully", 400: "Bad request"},
         description="Create a new user!",
