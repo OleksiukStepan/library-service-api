@@ -1,5 +1,3 @@
-from unittest.mock import patch
-
 from django.test import TestCase
 from rest_framework.test import APIClient
 from rest_framework import status
@@ -18,10 +16,11 @@ class BorrowingFilterTest(TestCase):
     Test case for filtering borrowings in the Borrowing ViewSet.
 
     This test case includes tests for filtering borrowings by active status
-    and by user ID, ensuring that the filters work correctly for authenticated users.
+    and by user ID, ensuring that the filters work correctly
+    for authenticated users.
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.client = APIClient()
         self.user1 = User.objects.create_user(
             first_name="test_name",
@@ -80,7 +79,7 @@ class BorrowingFilterTest(TestCase):
         self.url = reverse("borrowings:borrowings-list")
         self.client.login(email="test_admin@example.com", password="1qazcde3")
 
-    def test_filter_by_is_active(self):
+    def test_filter_by_is_active(self) -> None:
         """
         Test filtering borrowings by active status.
 
@@ -93,7 +92,7 @@ class BorrowingFilterTest(TestCase):
         borrowings = Borrowing.objects.filter(actual_return_date__isnull=True)
         self.assertEqual(len(response.data), borrowings.count())
 
-    def test_filter_by_user_id(self):
+    def test_filter_by_user_id(self) -> None:
         """
         Test filtering borrowings by user ID.
 
@@ -106,13 +105,13 @@ class BorrowingFilterTest(TestCase):
         borrowings = Borrowing.objects.filter(user=self.user1)
         self.assertEqual(len(response.data), borrowings.count())
 
-    def test_filter_by_is_active_and_user_id(self):
+    def test_filter_by_is_active_and_user_id(self) -> None:
         """
-       Test filtering borrowings by active status and user ID.
+        Test filtering borrowings by active status and user ID.
 
-       This test checks that an admin user can filter borrowings
-       that are currently active and belong to a specific user.
-       """
+        This test checks that an admin user can filter borrowings
+        that are currently active and belong to a specific user.
+        """
 
         self.client.force_authenticate(user=self.admin)
         response = self.client.get(

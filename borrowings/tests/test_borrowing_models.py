@@ -1,5 +1,3 @@
-from unittest.mock import patch
-
 from django.test import TestCase
 from django.utils import timezone
 from django.contrib.auth import get_user_model
@@ -21,7 +19,7 @@ class BorrowingModelTest(TestCase):
     inventory of books is managed correctly upon returning a book.
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.user = User.objects.create_user(
             first_name="test_name",
             last_name="test_surname",
@@ -37,12 +35,14 @@ class BorrowingModelTest(TestCase):
         )
         self.borrowing = Borrowing.objects.create(
             borrow_date=timezone.now().date(),
-            expected_return_date=timezone.now().date() + timezone.timedelta(days=10),
+            expected_return_date=(
+                timezone.now().date() + timezone.timedelta(days=10)
+            ),
             book=self.book,
             user=self.user,
         )
 
-    def test_return_book_success(self):
+    def test_return_book_success(self) -> None:
         """
         Test case for the Borrowing model.
 
@@ -55,7 +55,7 @@ class BorrowingModelTest(TestCase):
         self.assertIsNotNone(self.borrowing.actual_return_date)
         self.assertEqual(self.book.inventory, 11)
 
-    def test_return_book_already_returned(self):
+    def test_return_book_already_returned(self) -> None:
         """
         Test the return_book method when the book has already been returned.
 

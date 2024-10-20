@@ -1,4 +1,4 @@
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 from datetime import date, timedelta
 
 from django.utils import timezone
@@ -23,11 +23,12 @@ class BorrowingViewSetTest(TestCase):
     """
     Test case for the Borrowing ViewSet.
 
-    This test case includes tests for listing, retrieving, and creating borrowings,
-    ensuring that permissions and operations work correctly for both regular users and administrators.
+    This test case includes tests for listing, retrieving,
+    and creating borrowings, ensuring that permissions and operations
+    work correctly for both regular users and administrators.
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.client = APIClient()
         self.factory = APIRequestFactory()
         self.user = User.objects.create_user(
@@ -61,11 +62,12 @@ class BorrowingViewSetTest(TestCase):
         )
         self.client.force_authenticate(user=self.admin)
 
-    def test_get_borrowings_list(self):
+    def test_get_borrowings_list(self) -> None:
         """
         Test retrieving the borrowing list.
 
-        This test checks that an authenticated user can retrieve a list of borrowings.
+        This test checks that an authenticated user can retrieve
+        a list of borrowings.
         """
         response = self.client.get(self.list_url)
         borrowings = Borrowing.objects.all()
@@ -73,11 +75,12 @@ class BorrowingViewSetTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, serializer.data)
 
-    def test_get_borrowing_detail(self):
+    def test_get_borrowing_detail(self) -> None:
         """
         Test retrieving borrowing details.
 
-        This test checks that an authenticated user can retrieve the details of a specific borrowing.
+        This test checks that an authenticated user can retrieve
+        the details of a specific borrowing.
         """
         response = self.client.get(self.detail_url)
         borrowing = Borrowing.objects.get(pk=self.borrowing.pk)
@@ -88,13 +91,16 @@ class BorrowingViewSetTest(TestCase):
     @patch("borrowings.views.send_telegram_message")
     @patch("borrowings.views.create_stripe_session")
     def test_create_borrowing(
-        self, mock_create_stripe_session, mock_send_telegram_message
-    ):
+        self,
+        mock_create_stripe_session: MagicMock,
+        mock_send_telegram_message: MagicMock,
+    ) -> None:
         """
         Test creating a new borrowing.
 
         This test checks that an authenticated user can create a new borrowing,
-        and verifies that the book inventory is updated and notifications are sent.
+        and verifies that the book inventory is updated
+        and notifications are sent.
         """
         future_date = (timezone.now() + timedelta(days=1)).date()
         data = {
@@ -121,7 +127,7 @@ class BorrowingViewSetReturnTest(TestCase):
     and handling attempts to return an already returned borrowing.
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.client = APIClient()
         self.factory = APIRequestFactory()
         self.user = User.objects.create_user(
@@ -150,13 +156,18 @@ class BorrowingViewSetReturnTest(TestCase):
             user=self.user,
         )
         self.return_url = reverse(
-            "borrowings:borrowings-return-borrowing", args=[self.borrowing.pk]
+            "borrowings:borrowings-return-borrowing",
+            args=[self.borrowing.pk]
         )
         self.client.force_authenticate(user=self.user)
 
     @patch("borrowings.views.send_telegram_message")
     @patch("borrowings.views.create_stripe_session")
-    def test_return_borrowing(self, create_stripe_session, mock_send_telegram_message):
+    def test_return_borrowing(
+        self,
+        create_stripe_session: MagicMock,
+        mock_send_telegram_message: MagicMock,
+    ) -> None:
         """
         Test successfully returning a borrowing.
 
@@ -170,21 +181,28 @@ class BorrowingViewSetReturnTest(TestCase):
         self.borrowing.refresh_from_db()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(self.borrowing.actual_return_date, date.today())
-        self.assertEqual(response.data["message"], "The book was successfully returned")
+        self.assertEqual(
+            response.data["message"],
+            "The book was successfully returned"
+        )
 
-    def test_return_borrowing_already_returned(self):
+    def test_return_borrowing_already_returned(self) -> None:
         """
         Test returning a borrowing that has already been returned.
 
         This test checks that a validation error is raised if an admin
-        attempts to mark a borrowing as returned when it has already been returned.
+        attempts to mark a borrowing as returned when
+        it has already been returned.
         """
         self.client.force_authenticate(user=self.admin)
         self.borrowing.actual_return_date = "2023-01-09"
         self.borrowing.save()
         response = self.client.post(self.return_url)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data["error"], "This book has already been returned")
+        self.assertEqual(
+            response.data["error"],
+            "This book has already been returned"
+        )
 
 
 class BorrowingViewSetCreateTest(TestCase):
@@ -195,7 +213,7 @@ class BorrowingViewSetCreateTest(TestCase):
     and ensuring that the correct notifications are sent.
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.client = APIClient()
         self.factory = APIRequestFactory()
         self.book = Book.objects.create(
@@ -213,8 +231,10 @@ class BorrowingViewSetCreateTest(TestCase):
     @patch("borrowings.views.send_telegram_message")
     @patch("borrowings.views.create_stripe_session")
     def test_create_borrowing_sends_telegram_notification(
-        self, create_stripe_session, mock_send_telegram_message
-    ):
+        self,
+        create_stripe_session: MagicMock,
+        mock_send_telegram_message: MagicMock,
+    ) -> None:
         """
         Test creating a new borrowing and sending notifications.
 
@@ -224,7 +244,9 @@ class BorrowingViewSetCreateTest(TestCase):
         future_date = (timezone.now() + timezone.timedelta(days=1)).date()
         data = {
             "borrow_date": str(future_date),
-            "expected_return_date": str(future_date + timezone.timedelta(days=10)),
+            "expected_return_date": str(
+                future_date + timezone.timedelta(days=10)
+            ),
             "book": self.book.pk,
         }
         self.client.force_authenticate(user=self.user)
