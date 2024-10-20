@@ -32,6 +32,7 @@ class BorrowingViewSet(ModelViewSet):
     Admin users can see all borrowings, while regular users can only see their own.
     Supports filtering by `is_active` and `user_id` parameters.
     """
+
     permission_classes = [IsAdminOrIfAuthenticatedPostAndReadOnly]
     filterset_class = BorrowingFilter
     filter_backends = [DjangoFilterBackend]
@@ -41,9 +42,19 @@ class BorrowingViewSet(ModelViewSet):
         description="List of borrowings. Admins see all, regular users see their own borrowings only.",
         responses={200: BorrowingListSerializer(many=True)},
         parameters=[
-            OpenApiParameter(name='is_active', description='Filter by active borrowings', required=False, type=bool),
-            OpenApiParameter(name='user_id', description='Filter by user ID', required=False, type=int),
-        ]
+            OpenApiParameter(
+                name="is_active",
+                description="Filter by active borrowings",
+                required=False,
+                type=bool,
+            ),
+            OpenApiParameter(
+                name="user_id",
+                description="Filter by user ID",
+                required=False,
+                type=int,
+            ),
+        ],
     )
     def list(self, request: Request, *args, **kwargs):
         """List borrowings with optional filters."""
@@ -81,7 +92,6 @@ class BorrowingViewSet(ModelViewSet):
             return queryset
         return queryset.filter(user=user)
 
-
     def get_serializer_class(self) -> type(Serializer):
         if self.action == "list":
             return BorrowingListSerializer
@@ -112,8 +122,12 @@ class BorrowingViewSet(ModelViewSet):
         description="Mark a borrowing as returned. This action is available only to admin users.",
         request=BorrowingReturnSerializer,
         responses={
-            200: OpenApiResponse(response=dict, description="The book was successfully returned"),
-            400: OpenApiResponse(response=dict, description="This book has already been returned"),
+            200: OpenApiResponse(
+                response=dict, description="The book was successfully returned"
+            ),
+            400: OpenApiResponse(
+                response=dict, description="This book has already been returned"
+            ),
         },
     )
     @action(detail=True, methods=["POST"], permission_classes=[IsAdminUser])
@@ -134,9 +148,7 @@ class BorrowingViewSet(ModelViewSet):
         6. Return an error response if the book has already been returned.
         """
         borrowing = self.get_object()
-        serializer = self.get_serializer(
-            instance=borrowing, data=request.data
-        )
+        serializer = self.get_serializer(instance=borrowing, data=request.data)
         serializer.is_valid(raise_exception=True)
         try:
             serializer.return_borrowing()
@@ -145,5 +157,5 @@ class BorrowingViewSet(ModelViewSet):
         except ValidationError:
             return Response(
                 {"error": "This book has already been returned"},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST,
             )
