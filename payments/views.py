@@ -19,6 +19,7 @@ class PaymentViewSet(viewsets.ReadOnlyModelViewSet):
     - Staff users receive more detailed information
     - Regular users receive limited information
     """
+
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
@@ -44,6 +45,7 @@ class PaymentSuccessView(APIView):
     updated to reflect the successful status. Otherwise, an error response
     is returned.
     """
+
     def get(self, request):
         session_id = request.query_params.get("session_id")
         payment = get_object_or_404(Payment, session_id=session_id)
@@ -70,13 +72,11 @@ class PaymentCancelView(APIView):
     This view returns a message to inform the user that their payment was
     cancelled. It indicates that the user can attempt to complete the
     payment again within 24 hours.
-
     """
+
     def get(self, request):
         return Response(
-            {
-                "message": "Payment was cancelled. "
-                           "You can try again within 24 hours."
-            },
+            {"message": "Payment was cancelled. "
+                        "You can try again within 24 hours."},
             status=status.HTTP_200_OK,
         )
