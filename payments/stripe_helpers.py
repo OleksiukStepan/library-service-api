@@ -14,6 +14,25 @@ FINE_MULTIPLIER = 2
 
 
 def create_stripe_session(borrowing, request):
+    """
+    Create a Stripe payment session for either an initial
+    borrowing payment or an overdue fine.
+
+    If the book has already been returned, and it was returned after
+    the expected return date, a fine is calculated based on the overdue
+    days using the `FINE_MULTIPLIER`.
+    If the book has not been returned yet, this is the initial payment
+    for the borrowing, and the total price is calculated based on the days
+    the user has requested to borrow the book, with payment being made
+    upfront for the entire borrowing period.
+
+    Stripe Checkout:
+    - Success URL: Redirects to the success page with the Stripe session ID.
+    - Cancel URL: Redirects to the cancellation page.
+
+    Creates:
+    - A `Payment` object with the relevant information about the transaction.
+    """
     if borrowing.actual_return_date:
         if borrowing.actual_return_date <= borrowing.expected_return_date:
             return
@@ -49,7 +68,9 @@ def create_stripe_session(borrowing, request):
             request.build_absolute_uri(reverse("payments:payment-success"))
             + "?session_id={CHECKOUT_SESSION_ID}"
         ),
-        cancel_url=request.build_absolute_uri(reverse("payments:payment-cancel")),
+        cancel_url=request.build_absolute_uri(
+            reverse("payments:payment-cancel")
+        ),
     )
     payment = Payment.objects.create(
         borrowing=borrowing,

@@ -13,6 +13,16 @@ from payments.stripe_helpers import renew_stripe_session
 
 
 class PaymentViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    A viewset for retrieving payment information.
+
+    This viewset provides read-only access to Payment objects.
+    Regular users can only view their own payments, while staff
+    users can view all payments in the system.
+    - Staff users receive more detailed information
+    - Regular users receive limited information
+    """
+
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
@@ -29,6 +39,16 @@ class PaymentViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class PaymentSuccessView(APIView):
+    """
+    Handle successful Stripe payment confirmations.
+
+    This view retrieves a payment session using the provided session_id
+    and checks the payment status with Stripe. If the payment is successful
+    (status is 'paid'), the corresponding Payment object in the database is
+    updated to reflect the successful status. Otherwise, an error response
+    is returned.
+    """
+
     def get(self, request):
         session_id = request.query_params.get("session_id")
         payment = get_object_or_404(Payment, session_id=session_id)
@@ -45,16 +65,30 @@ class PaymentSuccessView(APIView):
             )
             send_telegram_message(message)
 
-            return Response({"message": "Payment successful"}, status=200)
+            return Response(
+                {"message": "Payment successful"}, status=status.HTTP_200_OK
+            )
         else:
-            return Response({"message": "Payment not completed"}, status=400)
+            return Response(
+                {"message": "Payment not completed"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
 
 class PaymentCancelView(APIView):
+    """
+    Handle payment cancellations.
+
+    This view returns a message to inform the user that their payment was
+    cancelled. It indicates that the user can attempt to complete the
+    payment again within 24 hours.
+    """
+
     def get(self, request):
         return Response(
-            {"message": "Payment was cancelled. You can try again within 24 hours."},
-            status=200,
+            {"message": "Payment was cancelled. "
+                        "You can try again within 24 hours."},
+            status=status.HTTP_200_OK,
         )
 
 

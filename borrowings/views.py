@@ -2,6 +2,7 @@ from rest_framework.serializers import Serializer
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAdminUser
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import ModelSerializer
@@ -10,7 +11,7 @@ from django.db.models import QuerySet
 from django_filters.rest_framework import DjangoFilterBackend
 
 from borrowings.models import Borrowing
-from borrowings.permissions import IsAdminOrIfAuthenticatedReadOnly
+from borrowings.permissions import IsAdminOrIfAuthenticatedPostAndReadOnly
 from borrowings.serializers import (
     BorrowingSerializer,
     BorrowingListSerializer,
@@ -30,7 +31,7 @@ class BorrowingViewSet(ModelViewSet):
     Admin users can see all borrowings, while regular users can only see their own.
     Supports filtering by `is_active` and `user_id` parameters.
     """
-    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
+    permission_classes = [IsAdminOrIfAuthenticatedPostAndReadOnly]
     filterset_class = BorrowingFilter
     filter_backends = [DjangoFilterBackend]
 
@@ -74,7 +75,7 @@ class BorrowingViewSet(ModelViewSet):
         create_stripe_session(borrowing, self.request)
         send_telegram_message(message)
 
-    @action(detail=True, methods=["POST"])
+    @action(detail=True, methods=["POST"], permission_classes=[IsAdminUser])
     def return_borrowing(self, request: Request, pk: str = None) -> Response:
         borrowing = self.get_object()
         serializer = self.get_serializer(
