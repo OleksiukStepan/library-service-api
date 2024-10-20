@@ -6,7 +6,12 @@ class UserManager(BaseUserManager):
 
     use_in_migrations = True
 
-    def _create_user(self, email: str, password: str, **extra_fields) -> AbstractUser:
+    def _create_user(
+            self,
+            email: str,
+            password: str,
+            **extra_fields
+    ) -> AbstractUser:
         """Creates and saves a User with the given email and password."""
 
         if not email:
@@ -17,7 +22,12 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_user(self, email: str, password: str, **extra_fields) -> AbstractUser:
+    def create_user(
+            self,
+            email: str,
+            password: str,
+            **extra_fields
+    ) -> AbstractUser:
         """Creates and saves a regular user (non-superuser)."""
 
         extra_fields.setdefault("is_superuser", False)
