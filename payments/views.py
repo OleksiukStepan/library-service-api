@@ -51,7 +51,10 @@ class PaymentSuccessView(APIView):
 
     def get(self, request):
         session_id = request.query_params.get("session_id")
-        payment = get_object_or_404(Payment, session_id=session_id)
+        payment = get_object_or_404(
+            Payment.objects.select_related("borrowing__user"),
+            session_id=session_id
+        )
         session = stripe.checkout.Session.retrieve(session_id)
 
         if session.payment_status == "paid":
@@ -106,7 +109,7 @@ class RenewPaymentSessionView(APIView):
 
     def post(self, request: Request, pk: int) -> Response:
         payment = get_object_or_404(
-            Payment,
+            Payment.objects.select_related("borrowing__book"),
             pk=pk,
             status=Payment.Status.EXPIRED
         )
