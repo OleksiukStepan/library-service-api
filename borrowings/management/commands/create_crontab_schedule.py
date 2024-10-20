@@ -3,7 +3,7 @@ from django_celery_beat.models import CrontabSchedule, PeriodicTask
 
 
 class Command(BaseCommand):
-    help = "Create crontab schedule for daily borrowing count task"
+    help = "Create crontab schedule for daily checking overdue borrowings"
 
     def handle(self, *args, **kwargs) -> None:
         schedule, _ = CrontabSchedule.objects.get_or_create(
