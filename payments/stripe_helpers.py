@@ -59,6 +59,7 @@ def create_stripe_session(borrowing: Borrowing, request: Request) -> None:
             }
         ],
         mode="payment",
+        locale="en",
         success_url=(
             request.build_absolute_uri(reverse("payments:payment-success"))
             + "?session_id={CHECKOUT_SESSION_ID}"
@@ -100,6 +101,7 @@ def renew_stripe_session(payment: Payment, request: Request) -> None:
             }
         ],
         mode="payment",
+        locale="en",
         success_url=(
             request.build_absolute_uri(reverse("payments:payment-success"))
             + "?session_id={CHECKOUT_SESSION_ID}"
