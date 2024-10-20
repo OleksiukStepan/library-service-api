@@ -7,7 +7,7 @@ from django.db import models
 from django.utils.text import slugify
 
 
-def books_image_file_path(instance, filename):
+def books_image_file_path(instance: "Book", filename: str) -> str:
     _, extension = os.path.splitext(filename)
     filename = f"{slugify(instance.title)}-{uuid.uuid4()}{extension}"
 
@@ -28,7 +28,9 @@ class Book(models.Model):
         decimal_places=2,
         validators=[MinValueValidator(Decimal("0.01"))]
     )
-    image = models.ImageField(upload_to=books_image_file_path, null=True, blank=True)
+    image = models.ImageField(
+        upload_to=books_image_file_path, null=True, blank=True
+    )
 
     def __str__(self):
         return f"{self.title} by {self.author}"

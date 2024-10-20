@@ -4,8 +4,11 @@ from django.core.exceptions import ValidationError
 
 
 class UserModelTests(TestCase):
+    """Test suite for the custom User model"""
 
     def test_create_user(self):
+        """Test regular user creation"""
+
         User = get_user_model()
         user = User.objects.create_user(
             email="testuser@example.com",
@@ -19,6 +22,8 @@ class UserModelTests(TestCase):
         self.assertFalse(user.is_superuser)
 
     def test_create_superuser(self):
+        """Test admin user creation"""
+
         User = get_user_model()
         superuser = User.objects.create_superuser(
             email="superuser@example.com",
@@ -32,6 +37,8 @@ class UserModelTests(TestCase):
         self.assertTrue(superuser.is_superuser)
 
     def test_create_user_without_email(self):
+        """Test user creation without email"""
+
         User = get_user_model()
         with self.assertRaises(ValueError):
             User.objects.create_user(
@@ -42,6 +49,8 @@ class UserModelTests(TestCase):
             )
 
     def test_create_user_without_first_name(self):
+        """Test user creation without first name"""
+
         User = get_user_model()
         user = User(
             email="testuser@example.com",
@@ -53,6 +62,8 @@ class UserModelTests(TestCase):
             user.full_clean()
 
     def test_create_user_without_last_name(self):
+        """Test user creation without last name"""
+
         User = get_user_model()
         user = User(
             email="testuser@example.com",
@@ -64,6 +75,8 @@ class UserModelTests(TestCase):
             user.full_clean()
 
     def test_email_unique_constraint(self):
+        """Test unique email constraint"""
+
         User = get_user_model()
         User.objects.create_user(
             email="unique@example.com",
