@@ -8,7 +8,6 @@ from payments.views import (
     RenewPaymentSessionView,
 )
 
-app_name = "payments"
 
 router = DefaultRouter()
 router.register("", PaymentViewSet, basename="payment")
@@ -24,3 +23,5 @@ urlpatterns = [
 ]
 
 urlpatterns += router.urls
+
+app_name = "payments"

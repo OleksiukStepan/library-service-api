@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import transaction
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
@@ -23,10 +25,13 @@ class BorrowingSerializer(serializers.ModelSerializer):
     Ensures that book inventory is updated and validations are performed for
     stock availability and pending payments.
 
-        """
+    """
+
     book = serializers.PrimaryKeyRelatedField(queryset=Book.objects.all())
     payments = PaymentUserSerializer(
-        many=True, read_only=True, allow_null=True,
+        many=True,
+        read_only=True,
+        allow_null=True,
     )
 
     class Meta:
@@ -38,7 +43,7 @@ class BorrowingSerializer(serializers.ModelSerializer):
             "actual_return_date",
             "book",
             "user",
-            "payments"
+            "payments",
         ]
         read_only_fields = ["user", "actual_return_date"]
 
@@ -54,10 +59,19 @@ class BorrowingSerializer(serializers.ModelSerializer):
         """
         Validates if the user has pending payments.
         """
-        if Borrowing.objects.filter(user=user, payments__status=Payment.Status.PENDING).exists():
-            raise ValidationError("You cannot borrow a new book until pending payments are resolved")
+        if Borrowing.objects.filter(
+            user=user, payments__status=Payment.Status.PENDING
+        ).exists():
+            raise ValidationError(
+                "You cannot borrow a new book until "
+                "pending payments are resolved"
+            )
 
-    def validate_borrowings_date(self, borrow_date, expected_return_date) -> None:
+    def validate_borrowings_date(
+            self,
+            borrow_date: datetime,
+            expected_return_date: datetime
+    ) -> None:
         """
         Validates the dates for the borrowing.
         """
@@ -67,12 +81,15 @@ class BorrowingSerializer(serializers.ModelSerializer):
             raise ValidationError("Borrowing cannot be created for past dates")
 
         if expected_return_date < borrow_date:
-            raise ValidationError("Expected return date cannot be earlier than borrow date")
+            raise ValidationError(
+                "Expected return date cannot be earlier than borrow date"
+            )
 
     def create(self, validated_data: dict) -> Borrowing:
         """
         Creates a new borrowing instance with proper validations.
         """
+
         with transaction.atomic():
             book = validated_data["book"]
             user = self.context["request"].user
@@ -97,6 +114,7 @@ class BorrowingReturnSerializer(BorrowingSerializer):
 
     Handles the logic for returning a borrowed book.
     """
+
     class Meta:
         model = Borrowing
         fields = []
@@ -111,6 +129,7 @@ class BorrowingListSerializer(BorrowingSerializer):
 
     Lists borrowings with slug fields for book title and user email.
     """
+
     book = serializers.SlugRelatedField(slug_field="title", read_only=True)
     user = serializers.SlugRelatedField(slug_field="email", read_only=True)
 
@@ -122,6 +141,7 @@ class BorrowingDetailSerializer(BorrowingSerializer):
     Provides detailed information about a borrowing, including
     serialized book and user details.
     """
+
     book = BookSerializer(read_only=True)
     user = UserSerializer(read_only=True)
 

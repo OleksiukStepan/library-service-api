@@ -9,7 +9,11 @@ from rest_framework.serializers import ModelSerializer
 from rest_framework.viewsets import ModelViewSet
 from django.db.models import QuerySet
 from django_filters.rest_framework import DjangoFilterBackend
-from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiResponse
+from drf_spectacular.utils import (
+    extend_schema,
+    OpenApiParameter,
+    OpenApiResponse,
+)
 
 from borrowings.models import Borrowing
 from borrowings.permissions import IsAdminOrIfAuthenticatedPostAndReadOnly
@@ -29,17 +33,18 @@ class BorrowingViewSet(ModelViewSet):
     ViewSet for managing book borrowings.
 
     Allows access only to authenticated users.
-    Admin users can see all borrowings, while regular users can only see their own.
+    Admin users can see all borrowings,
+    while regular users can only see their own.
     Supports filtering by `is_active` and `user_id` parameters.
     """
 
     permission_classes = [IsAdminOrIfAuthenticatedPostAndReadOnly]
     filterset_class = BorrowingFilter
-    filter_backends = [DjangoFilterBackend]
 
     @extend_schema(
         summary="List borrowings",
-        description="List of borrowings. Admins see all, regular users see their own borrowings only.",
+        description="List of borrowings. Admins see all, "
+                    "regular users see their own borrowings only.",
         responses={200: BorrowingListSerializer(many=True)},
         parameters=[
             OpenApiParameter(
@@ -65,13 +70,15 @@ class BorrowingViewSet(ModelViewSet):
         description="Retrieve details of a single borrowing by its ID.",
         responses={200: BorrowingDetailSerializer},
     )
-    def retrieve(self, request: Request, *args, **kwargs):
+    def retrieve(self, request: Request, *args, **kwargs) -> Borrowing:
         """Retrieve a single borrowing by ID."""
         return super().retrieve(request, *args, **kwargs)
 
     @extend_schema(
         summary="Create new borrowing",
-        description="Create a new borrowing for a book. Sends a notification to Telegram and creates a Stripe session.",
+        description="Create a new borrowing for a book. "
+                    "Sends a notification to Telegram and "
+                    "creates a Stripe session.",
         request=BorrowingSerializer,
         responses={201: BorrowingSerializer},
     )
@@ -104,7 +111,8 @@ class BorrowingViewSet(ModelViewSet):
 
     def perform_create(self, serializer: ModelSerializer) -> None:
         """
-        Saves a new borrowing, setting the user to the currently authenticated user.
+        Saves a new borrowing, setting the user to
+        the currently authenticated user.
         Sends a notification to Telegram about the new borrowing.
         """
         borrowing = serializer.save(user=self.request.user)
@@ -119,14 +127,17 @@ class BorrowingViewSet(ModelViewSet):
 
     @extend_schema(
         summary="Return borrowing",
-        description="Mark a borrowing as returned. This action is available only to admin users.",
+        description="Mark a borrowing as returned. "
+                    "This action is available only to admin users.",
         request=BorrowingReturnSerializer,
         responses={
             200: OpenApiResponse(
-                response=dict, description="The book was successfully returned"
+                response=dict,
+                description="The book was successfully returned"
             ),
             400: OpenApiResponse(
-                response=dict, description="This book has already been returned"
+                response=dict,
+                description="This book has already been returned"
             ),
         },
     )
@@ -135,9 +146,10 @@ class BorrowingViewSet(ModelViewSet):
         """
         Action to mark a borrowing as returned.
 
-        This action is restricted to admin users and marks the selected borrowing
-        as returned by setting the `actual_return_date`. If the borrowing has already
-        been returned, a validation error is raised.
+        This action is restricted to admin users and marks
+        the selected borrowing as returned by setting the `actual_return_date`.
+        If the borrowing has already been returned,
+        a validation error is raised.
 
         Steps:
         1. Retrieve the borrowing instance using the primary key (pk).

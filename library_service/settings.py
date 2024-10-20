@@ -180,6 +180,10 @@ else:
 AUTH_USER_MODEL = "users.User"
 
 REST_FRAMEWORK = {
+    # PAGINATION
+    "DEFAULT_PAGINATION_CLASS":
+        "rest_framework.pagination.LimitOffsetPagination",
+    "PAGE_SIZE": 5,
     # FILTER
     "DEFAULT_FILTER_BACKENDS": [
         "django_filters.rest_framework.DjangoFilterBackend"
