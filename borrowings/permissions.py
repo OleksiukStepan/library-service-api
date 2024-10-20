@@ -11,13 +11,6 @@ class IsAdminOrIfAuthenticatedPostAndReadOnly(BasePermission):
 
         Methods:
             has_permission(self, request, view): Checks if the request should be permitted.
-
-        Args:
-            request (Request): The incoming HTTP request.
-            view (View): The view being accessed.
-
-        Returns:
-            bool: True if the request should be permitted, False otherwise.
         """
 
     def has_permission(self, request, view):

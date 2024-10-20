@@ -23,19 +23,6 @@ class BorrowingSerializer(serializers.ModelSerializer):
     Ensures that book inventory is updated and validations are performed for
     stock availability and pending payments.
 
-    Attributes:
-        book (PrimaryKeyRelatedField): Field to serialize the related book instance.
-        payments (PaymentUserSerializer): Field to serialize related payment instances.
-
-    Methods:
-        validate_book_inventory(self, book: Book) -> Book:
-            Validates if the book is in stock.
-        validate_if_pending_exist(self, user: User) -> None:
-            Validates if the user has pending payments.
-        validate_borrowings_date(self, borrow_date, expected_return_date) -> None:
-            Validates the dates for the borrowing.
-        create(self, validated_data: dict) -> Borrowing:
-            Creates a new borrowing instance with proper validations.
         """
     book = serializers.PrimaryKeyRelatedField(queryset=Book.objects.all())
     payments = PaymentUserSerializer(
@@ -58,15 +45,6 @@ class BorrowingSerializer(serializers.ModelSerializer):
     def validate_book_inventory(self, book: Book) -> Book:
         """
         Validates if the book is in stock.
-
-        Args:
-            book (Book): The book instance to check.
-
-        Raises:
-            ValidationError: If the book is out of stock.
-
-        Returns:
-            Book: The validated book instance.
         """
         if book.inventory <= 0:
             raise ValidationError("This book is currently out of stock")
@@ -75,12 +53,6 @@ class BorrowingSerializer(serializers.ModelSerializer):
     def validate_if_pending_exist(self, user: User) -> None:
         """
         Validates if the user has pending payments.
-
-        Args:
-            user (User): The user instance to check.
-
-        Raises:
-            ValidationError: If there are pending payments.
         """
         if Borrowing.objects.filter(user=user, payments__status=Payment.Status.PENDING).exists():
             raise ValidationError("You cannot borrow a new book until pending payments are resolved")
@@ -88,13 +60,6 @@ class BorrowingSerializer(serializers.ModelSerializer):
     def validate_borrowings_date(self, borrow_date, expected_return_date) -> None:
         """
         Validates the dates for the borrowing.
-
-        Args:
-            borrow_date (date): The date when the book is borrowed.
-            expected_return_date (date): The expected return date.
-
-        Raises:
-            ValidationError: If the dates are invalid.
         """
         today = timezone.now().date()
 
@@ -107,12 +72,6 @@ class BorrowingSerializer(serializers.ModelSerializer):
     def create(self, validated_data: dict) -> Borrowing:
         """
         Creates a new borrowing instance with proper validations.
-
-        Args:
-            validated_data (dict): The validated data for creating a borrowing instance.
-
-        Returns:
-            Borrowing: The created borrowing instance.
         """
         with transaction.atomic():
             book = validated_data["book"]
@@ -137,10 +96,6 @@ class BorrowingReturnSerializer(BorrowingSerializer):
     Serializer for returning a borrowing.
 
     Handles the logic for returning a borrowed book.
-
-    Methods:
-        return_borrowing(self) -> None:
-            Marks the borrowing as returned.
     """
     class Meta:
         model = Borrowing

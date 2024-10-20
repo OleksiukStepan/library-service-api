@@ -91,13 +91,6 @@ class BorrowingViewSet(ModelViewSet):
         4. Create a Stripe session for the returned borrowing.
         5. Return a success response if the book was successfully returned.
         6. Return an error response if the book has already been returned.
-
-        Args:
-            request (Request): The incoming HTTP request.
-            pk (str, optional): The primary key of the borrowing instance.
-
-        Returns:
-            Response: A response indicating the result of the return operation.
         """
         borrowing = self.get_object()
         serializer = self.get_serializer(

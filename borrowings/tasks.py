@@ -25,12 +25,6 @@ def send_overdue_borrowings() -> None:
     - Filters borrowings with expected return date less than or equal to today + 1 day and actual return date is null.
     - Sends a notification for each overdue borrowing.
     - Sends a notification if no borrowings are overdue.
-
-    Args:
-        None
-
-    Returns:
-        None
     """
     today = timezone.now().date()
     overdue_borrowings = Borrowing.objects.filter(
