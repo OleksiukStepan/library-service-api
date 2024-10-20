@@ -196,7 +196,6 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=2),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
     "ROTATE_REFRESH_TOKENS": False,
-    "AUTH_HEADER_TYPES": ("Authorize",),
 }
 
 # Spectacular settings
@@ -232,3 +231,8 @@ CELERY_TIMEZONE = "Europe/Kyiv"
 CELERY_TASK_TRACK_STARTED = True
 
 CELERY_TASK_TIME_LIMIT = 30 * 60
+
+# additional path to find fixtures for tests
+FIXTURE_DIRS = [
+    os.path.join(BASE_DIR, "payments", "tests", "fixtures"),
+]
