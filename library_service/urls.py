@@ -24,11 +24,15 @@ from drf_spectacular.views import (
     SpectacularRedocView,
 )
 
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/users/", include("users.urls", namespace="users")),
     path("api/books/", include("books.urls", namespace="books")),
-    path("api/borrowings/", include("borrowings.urls", namespace="borrowings")),
+    path(
+        "api/borrowings/",
+        include("borrowings.urls", namespace="borrowings")
+    ),
     path("api/payments/", include("payments.urls", namespace="payments")),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
@@ -42,4 +46,3 @@ urlpatterns = [
         name="redoc",
     ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
