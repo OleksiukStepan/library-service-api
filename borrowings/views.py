@@ -9,6 +9,7 @@ from rest_framework.serializers import ModelSerializer
 from rest_framework.viewsets import ModelViewSet
 from django.db.models import QuerySet
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiResponse
 
 from borrowings.models import Borrowing
 from borrowings.permissions import IsAdminOrIfAuthenticatedPostAndReadOnly
@@ -34,6 +35,38 @@ class BorrowingViewSet(ModelViewSet):
     permission_classes = [IsAdminOrIfAuthenticatedPostAndReadOnly]
     filterset_class = BorrowingFilter
     filter_backends = [DjangoFilterBackend]
+
+    @extend_schema(
+        summary="List borrowings",
+        description="List of borrowings. Admins see all, regular users see their own borrowings only.",
+        responses={200: BorrowingListSerializer(many=True)},
+        parameters=[
+            OpenApiParameter(name='is_active', description='Filter by active borrowings', required=False, type=bool),
+            OpenApiParameter(name='user_id', description='Filter by user ID', required=False, type=int),
+        ]
+    )
+    def list(self, request: Request, *args, **kwargs):
+        """List borrowings with optional filters."""
+        return super().list(request, *args, **kwargs)
+
+    @extend_schema(
+        summary="Retrieve borrowing",
+        description="Retrieve details of a single borrowing by its ID.",
+        responses={200: BorrowingDetailSerializer},
+    )
+    def retrieve(self, request: Request, *args, **kwargs):
+        """Retrieve a single borrowing by ID."""
+        return super().retrieve(request, *args, **kwargs)
+
+    @extend_schema(
+        summary="Create new borrowing",
+        description="Create a new borrowing for a book. Sends a notification to Telegram and creates a Stripe session.",
+        request=BorrowingSerializer,
+        responses={201: BorrowingSerializer},
+    )
+    def create(self, request: Request, *args, **kwargs):
+        """Create a new borrowing."""
+        return super().create(request, *args, **kwargs)
 
     def get_queryset(self) -> QuerySet:
         """
@@ -74,6 +107,15 @@ class BorrowingViewSet(ModelViewSet):
         create_stripe_session(borrowing, self.request)
         send_telegram_message(message)
 
+    @extend_schema(
+        summary="Return borrowing",
+        description="Mark a borrowing as returned. This action is available only to admin users.",
+        request=BorrowingReturnSerializer,
+        responses={
+            200: OpenApiResponse(response=dict, description="The book was successfully returned"),
+            400: OpenApiResponse(response=dict, description="This book has already been returned"),
+        },
+    )
     @action(detail=True, methods=["POST"], permission_classes=[IsAdminUser])
     def return_borrowing(self, request: Request, pk: str = None) -> Response:
         """
