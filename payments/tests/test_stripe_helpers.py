@@ -76,6 +76,7 @@ class TestCreateStripeSession(TestCase):
                 }
             ],
             mode="payment",
+            locale="en",
             success_url=PAYMENT_SUCCESS_URL,
             cancel_url=PAYMENT_CANCEL_ULR,
         )
@@ -114,6 +115,7 @@ class TestCreateStripeSession(TestCase):
                 }
             ],
             mode="payment",
+            locale="en",
             success_url=PAYMENT_SUCCESS_URL,
             cancel_url=PAYMENT_CANCEL_ULR,
         )
