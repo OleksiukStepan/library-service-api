@@ -245,5 +245,5 @@ CELERY_TASK_TIME_LIMIT = 30 * 60
 # additional path to find fixtures for tests
 
 FIXTURE_DIRS = [
-    os.path.join(BASE_DIR, "payments", "tests", "fixtures"),
+    os.path.join(BASE_DIR, "fixtures"),
 ]
