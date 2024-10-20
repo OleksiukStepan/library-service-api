@@ -27,15 +27,16 @@ class UserSerializer(serializers.ModelSerializer):
             "style": {"input_type": "password"},
         }}
 
-    def create(self, validated_data):
+    def create(self, validated_data: dict) -> User:
         """Create and return a new user with encrypted password."""
+
         user = User(**validated_data)
-        user.set_password(validated_data['password'])
+        user.set_password(validated_data["password"])
         user.save()
 
         return user
 
-    def update(self, instance, validated_data):
+    def update(self, instance: User, validated_data: dict) -> User:
         """
         Update user details, set password if provided, and return the user.
         """
