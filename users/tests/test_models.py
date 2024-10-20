@@ -76,7 +76,7 @@ class UserModelTests(TestCase):
 
     def test_email_unique_constraint(self):
         """Test unique email constraint"""
-        
+
         User = get_user_model()
         User.objects.create_user(
             email="unique@example.com",

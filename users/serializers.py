@@ -36,7 +36,7 @@ class UserSerializer(serializers.ModelSerializer):
 
         return user
 
-    def update(self, instance, validated_data):
+    def update(self, instance: User, validated_data: dict) -> User:
         """
         Update user details, set password if provided, and return the user.
         """
