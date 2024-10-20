@@ -7,10 +7,7 @@ class UserManager(BaseUserManager):
     use_in_migrations = True
 
     def _create_user(
-            self,
-            email: str,
-            password: str,
-            **extra_fields
+            self, email: str, password: str, **extra_fields
     ) -> AbstractUser:
         """Creates and saves a User with the given email and password."""
 
