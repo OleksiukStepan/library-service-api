@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import ModelSerializer
@@ -20,17 +21,16 @@ from payments.stripe_helpers import create_stripe_session
 
 
 class BorrowingViewSet(ModelViewSet):
-    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
+    permission_classes = [IsAuthenticated]
     filterset_class = BorrowingFilter
 
     def get_queryset(self):
         user = self.request.user
+        queryset = Borrowing.objects.select_related("user", "book")
         if user.is_staff:
-            return Borrowing.objects.select_related("user", "book")
-        return (
-            Borrowing.objects.select_related("user", "book")
-            .filter(user=user)
-        )
+            return queryset
+        return queryset.filter(user=user)
+
 
     def get_serializer_class(self):
         if self.action == "list":

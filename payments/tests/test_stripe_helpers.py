@@ -36,7 +36,8 @@ class TestCreateStripeSession(TestCase):
         call_command("loaddata", "data.json")
 
     @classmethod
-    def tearDownClass(cls): ...
+    def tearDownClass(cls):
+        ...
 
     def tearDown(self):
         self.patcher.stop()

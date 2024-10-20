@@ -93,10 +93,23 @@ class PaymentCancelView(APIView):
 
 
 class RenewPaymentSessionView(APIView):
-    permission_classes = [IsAuthenticated]
+    """
+    Renew an expired Stripe payment session for a specific payment.
+
+    This view handles the renewal of a Stripe payment session for a payment
+    that has expired. It retrieves the payment by its primary key (pk) and
+    checks if its status is 'EXPIRED'. If the payment is expired, a new Stripe
+    session is created by calling the `renew_stripe_session` function, and
+    the user is provided with a message indicating that the session has been
+    successfully renewed.
+    """
 
     def post(self, request: Request, pk: int) -> Response:
-        payment = get_object_or_404(Payment, pk=pk, status=Payment.Status.EXPIRED)
+        payment = get_object_or_404(
+            Payment,
+            pk=pk,
+            status=Payment.Status.EXPIRED
+        )
         renew_stripe_session(payment, request)
 
         return Response(

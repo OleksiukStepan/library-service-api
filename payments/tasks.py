@@ -1,9 +1,8 @@
-from celery import shared_task
 import stripe
+from celery import shared_task
 from django.conf import settings
 
 from payments.models import Payment
-
 
 stripe.api_key = settings.STRIPE_API_KEY
 
