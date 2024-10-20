@@ -1,4 +1,5 @@
 from decimal import Decimal
+from unittest.mock import patch
 
 from django.test import TestCase
 from rest_framework import status
@@ -63,21 +64,26 @@ class BorrowingViewSetTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["id"], self.borrowing.id)
 
-
-    def test_create_borrowing(self):
+    @patch("borrowings.views.send_telegram_message")
+    @patch("borrowings.views.create_stripe_session")
+    def test_create_borrowing(self, create_stripe_session, mock_send_telegram_message):
         self.client.force_authenticate(user=self.user)
         data = {
             "book": self.book.id,
-            "borrow_date": timezone.now().date(),
-            "expected_return_date": timezone.now().date() + timezone.timedelta(days=10),
+            "borrow_date": str(timezone.now().date() + timezone.timedelta(days=1)),
+            "expected_return_date": str(timezone.now().date() + timezone.timedelta(days=10)),
         }
         response = self.client.post(self.url_list, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.book.refresh_from_db()
-        self.assertEqual(self.book.inventory, 9)  # Inventory should decrease
+        self.assertEqual(self.book.inventory, 9)
+        borrowing = Borrowing.objects.get(id=response.data["id"])
+        self.assertEqual(borrowing.user, self.user)
+        self.assertEqual(borrowing.book, self.book)
+        mock_send_telegram_message.assert_called_once()  # Inventory should decrease
 
     def test_return_borrowing_success(self):
-        self.client.force_authenticate(user=self.user)
+        self.client.force_authenticate(user=self.admin)
         response = self.client.post(self.url_return)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.borrowing.refresh_from_db()
@@ -86,7 +92,7 @@ class BorrowingViewSetTest(TestCase):
         self.assertEqual(self.book.inventory, 11)  # Inventory should increase
 
     def test_return_borrowing_already_returned(self):
-        self.client.force_authenticate(user=self.user)
+        self.client.force_authenticate(user=self.admin)
         self.borrowing.actual_return_date = timezone.now().date()
         self.borrowing.save()
         response = self.client.post(self.url_return)

@@ -122,8 +122,8 @@ class BorrowingViewSetReturnTest(TestCase):
         )
         self.client.force_authenticate(user=self.user)
 
-    @patch("borrowings.views.create_stripe_session")
-    def test_return_borrowing(self, mock_create_stripe_session):
+    def test_return_borrowing(self):
+        self.client.force_authenticate(user=self.admin)
         data = {"actual_return_date": str(date.today())}
         response = self.client.post(self.return_url, data)
         self.borrowing.refresh_from_db()
@@ -132,6 +132,7 @@ class BorrowingViewSetReturnTest(TestCase):
         self.assertEqual(response.data["message"], "The book was successfully returned")
 
     def test_return_borrowing_already_returned(self):
+        self.client.force_authenticate(user=self.admin)
         self.borrowing.actual_return_date = "2023-01-09"
         self.borrowing.save()
         response = self.client.post(self.return_url)
@@ -156,7 +157,8 @@ class BorrowingViewSetCreateTest(TestCase):
         self.list_url = reverse("borrowings:borrowings-list")
 
     @patch("borrowings.views.send_telegram_message")
-    def test_create_borrowing_sends_telegram_notification(self, mock_send_telegram_message):
+    @patch("borrowings.views.create_stripe_session")
+    def test_create_borrowing_sends_telegram_notification(self, create_stripe_session, mock_send_telegram_message):
         future_date = (timezone.now() + timezone.timedelta(days=1)).date()
         data = {
             "borrow_date": str(future_date),
@@ -169,4 +171,3 @@ class BorrowingViewSetCreateTest(TestCase):
             print(response.data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         mock_send_telegram_message.assert_called_once()
-
