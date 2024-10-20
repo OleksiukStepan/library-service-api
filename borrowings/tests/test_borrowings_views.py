@@ -122,7 +122,9 @@ class BorrowingViewSetReturnTest(TestCase):
         )
         self.client.force_authenticate(user=self.user)
 
-    def test_return_borrowing(self):
+    @patch("borrowings.views.send_telegram_message")
+    @patch("borrowings.views.create_stripe_session")
+    def test_return_borrowing(self, create_stripe_session, mock_send_telegram_message):
         self.client.force_authenticate(user=self.admin)
         data = {"actual_return_date": str(date.today())}
         response = self.client.post(self.return_url, data)
