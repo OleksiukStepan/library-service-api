@@ -13,9 +13,11 @@ from django.urls import reverse
 
 BOOKS_URL = reverse("books:book-list")
 
+
 def detail_url(book_id: int) -> str:
     """Returns the detail URL for a book."""
     return reverse("books:book-detail", args=[book_id])
+
 
 class PublicBookApiTests(TestCase):
     """Tests for public access to the book API."""
@@ -109,7 +111,10 @@ class PublicBookApiTests(TestCase):
         res = self.client.post(BOOKS_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
-        self.assertFalse(Book.objects.filter(title="Unauthorized Book").exists())
+        self.assertFalse(
+            Book.objects.filter(title="Unauthorized Book").exists()
+        )
+
 
 class AdminBookApiTests(TestCase):
     """Tests for admin access to the book API."""
@@ -127,7 +132,7 @@ class AdminBookApiTests(TestCase):
             author="Test Author",
             cover=Book.CoverType.HARD,
             inventory=10,
-            daily_fee=Decimal("2.00")
+            daily_fee=Decimal("2.00"),
         )
         self.book_url = f"/api/books/{self.book.id}/"
 
@@ -170,7 +175,7 @@ class AdminBookApiTests(TestCase):
             "image": SimpleUploadedFile(
                 name="test_image.jpg",
                 content=image_file.read(),
-                content_type="image/jpeg"
+                content_type="image/jpeg",
             ),
         }
 
@@ -183,7 +188,11 @@ class AdminBookApiTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         delete_response = self.client.delete(self.book_url)
-        self.assertEqual(delete_response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(
+            delete_response.status_code, status.HTTP_204_NO_CONTENT
+        )
 
         response_after_delete = self.client.get(self.book_url)
-        self.assertEqual(response_after_delete.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(
+            response_after_delete.status_code, status.HTTP_404_NOT_FOUND
+        )
