@@ -3,9 +3,17 @@ from django_celery_beat.models import CrontabSchedule, PeriodicTask
 
 
 class Command(BaseCommand):
+    """
+    Command to create a daily schedule for checking overdue borrowings.
+    """
     help = "Create crontab schedule for daily checking overdue borrowings"
 
     def handle(self, *args, **kwargs) -> None:
+        """
+       Creates a crontab schedule at midnight and a periodic task to send
+       notifications for overdue borrowings.
+       """
+
         schedule, _ = CrontabSchedule.objects.get_or_create(
             minute="0",
             hour="0",
@@ -27,6 +35,10 @@ class Command(BaseCommand):
         )
 
         if created:
-            self.stdout.write(self.style.SUCCESS("Successfully created periodic task"))
+            self.stdout.write(
+                self.style.SUCCESS("Successfully created periodic task")
+            )
         else:
-            self.stdout.write(self.style.SUCCESS("Periodic task already exists"))
+            self.stdout.write(
+                self.style.SUCCESS("Periodic task already exists")
+            )

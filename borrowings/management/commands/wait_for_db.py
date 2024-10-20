@@ -6,9 +6,15 @@ from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
+    """Command to wait for the database to be available."""
+
     help = "Waits for the database to be available"
 
-    def handle(self, *args, **kwargs):
+    def handle(self, *args, **kwargs) -> None:
+        """
+        Repeatedly checks the database connection until it becomes available.
+        """
+
         self.stdout.write("Waiting for database...")
         db_conn = None
         while not db_conn:
