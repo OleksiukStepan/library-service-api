@@ -8,7 +8,8 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 
 
 class BookViewSet(viewsets.ModelViewSet):
-    """API viewset for managing books. Provides CRUD operations and filtering."""
+    """API viewset for managing books.
+    Provides CRUD operations and filtering."""
 
     queryset = Book.objects.all()
     serializer_class = BookSerializer
