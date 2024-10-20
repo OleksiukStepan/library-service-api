@@ -77,6 +77,28 @@ class BorrowingViewSet(ModelViewSet):
 
     @action(detail=True, methods=["POST"], permission_classes=[IsAdminUser])
     def return_borrowing(self, request: Request, pk: str = None) -> Response:
+        """
+        Action to mark a borrowing as returned.
+
+        This action is restricted to admin users and marks the selected borrowing
+        as returned by setting the `actual_return_date`. If the borrowing has already
+        been returned, a validation error is raised.
+
+        Steps:
+        1. Retrieve the borrowing instance using the primary key (pk).
+        2. Validate the data using the serializer.
+        3. Attempt to mark the borrowing as returned.
+        4. Create a Stripe session for the returned borrowing.
+        5. Return a success response if the book was successfully returned.
+        6. Return an error response if the book has already been returned.
+
+        Args:
+            request (Request): The incoming HTTP request.
+            pk (str, optional): The primary key of the borrowing instance.
+
+        Returns:
+            Response: A response indicating the result of the return operation.
+        """
         borrowing = self.get_object()
         serializer = self.get_serializer(
             instance=borrowing, data=request.data

@@ -1,6 +1,25 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 class IsAdminOrIfAuthenticatedPostAndReadOnly(BasePermission):
+    """
+        Custom permission to allow read-only access to authenticated users
+        and full access to admin users.
+
+        Authenticated users can perform safe methods (GET, HEAD, OPTIONS)
+        and POST requests, but not other modifications (PUT, PATCH, DELETE).
+        Admin users have full access to all methods.
+
+        Methods:
+            has_permission(self, request, view): Checks if the request should be permitted.
+
+        Args:
+            request (Request): The incoming HTTP request.
+            view (View): The view being accessed.
+
+        Returns:
+            bool: True if the request should be permitted, False otherwise.
+        """
+
     def has_permission(self, request, view):
         return bool(
             (

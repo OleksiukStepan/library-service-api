@@ -20,6 +20,13 @@ User = get_user_model()
 
 
 class BorrowingViewSetTest(TestCase):
+    """
+    Test case for the Borrowing ViewSet.
+
+    This test case includes tests for listing, retrieving, and creating borrowings,
+    ensuring that permissions and operations work correctly for both regular users and administrators.
+    """
+
     def setUp(self):
         self.client = APIClient()
         self.factory = APIRequestFactory()
@@ -55,6 +62,11 @@ class BorrowingViewSetTest(TestCase):
         self.client.force_authenticate(user=self.admin)
 
     def test_get_borrowings_list(self):
+        """
+        Test retrieving the borrowing list.
+
+        This test checks that an authenticated user can retrieve a list of borrowings.
+        """
         response = self.client.get(self.list_url)
         borrowings = Borrowing.objects.all()
         serializer = BorrowingListSerializer(borrowings, many=True)
@@ -62,6 +74,11 @@ class BorrowingViewSetTest(TestCase):
         self.assertEqual(response.data, serializer.data)
 
     def test_get_borrowing_detail(self):
+        """
+        Test retrieving borrowing details.
+
+        This test checks that an authenticated user can retrieve the details of a specific borrowing.
+        """
         response = self.client.get(self.detail_url)
         borrowing = Borrowing.objects.get(pk=self.borrowing.pk)
         serializer = BorrowingDetailSerializer(borrowing)
@@ -70,7 +87,15 @@ class BorrowingViewSetTest(TestCase):
 
     @patch("borrowings.views.send_telegram_message")
     @patch("borrowings.views.create_stripe_session")
-    def test_create_borrowing(self, mock_create_stripe_session, mock_send_telegram_message):
+    def test_create_borrowing(
+        self, mock_create_stripe_session, mock_send_telegram_message
+    ):
+        """
+        Test creating a new borrowing.
+
+        This test checks that an authenticated user can create a new borrowing,
+        and verifies that the book inventory is updated and notifications are sent.
+        """
         future_date = (timezone.now() + timedelta(days=1)).date()
         data = {
             "borrow_date": str(future_date),
@@ -89,6 +114,13 @@ class BorrowingViewSetTest(TestCase):
 
 
 class BorrowingViewSetReturnTest(TestCase):
+    """
+    Test case for the return_borrowing action in the Borrowing ViewSet.
+
+    This test case includes tests for successfully returning a borrowing
+    and handling attempts to return an already returned borrowing.
+    """
+
     def setUp(self):
         self.client = APIClient()
         self.factory = APIRequestFactory()
@@ -125,6 +157,13 @@ class BorrowingViewSetReturnTest(TestCase):
     @patch("borrowings.views.send_telegram_message")
     @patch("borrowings.views.create_stripe_session")
     def test_return_borrowing(self, create_stripe_session, mock_send_telegram_message):
+        """
+        Test successfully returning a borrowing.
+
+        This test checks that an admin can mark a borrowing as returned,
+        verifies that the actual_return_date is set correctly,
+        and ensures that notifications are sent.
+        """
         self.client.force_authenticate(user=self.admin)
         data = {"actual_return_date": str(date.today())}
         response = self.client.post(self.return_url, data)
@@ -134,6 +173,12 @@ class BorrowingViewSetReturnTest(TestCase):
         self.assertEqual(response.data["message"], "The book was successfully returned")
 
     def test_return_borrowing_already_returned(self):
+        """
+        Test returning a borrowing that has already been returned.
+
+        This test checks that a validation error is raised if an admin
+        attempts to mark a borrowing as returned when it has already been returned.
+        """
         self.client.force_authenticate(user=self.admin)
         self.borrowing.actual_return_date = "2023-01-09"
         self.borrowing.save()
@@ -143,6 +188,13 @@ class BorrowingViewSetReturnTest(TestCase):
 
 
 class BorrowingViewSetCreateTest(TestCase):
+    """
+    Test case for creating a borrowing in the Borrowing ViewSet.
+
+    This test case includes tests for creating a new borrowing
+    and ensuring that the correct notifications are sent.
+    """
+
     def setUp(self):
         self.client = APIClient()
         self.factory = APIRequestFactory()
@@ -160,7 +212,15 @@ class BorrowingViewSetCreateTest(TestCase):
 
     @patch("borrowings.views.send_telegram_message")
     @patch("borrowings.views.create_stripe_session")
-    def test_create_borrowing_sends_telegram_notification(self, create_stripe_session, mock_send_telegram_message):
+    def test_create_borrowing_sends_telegram_notification(
+        self, create_stripe_session, mock_send_telegram_message
+    ):
+        """
+        Test creating a new borrowing and sending notifications.
+
+        This test checks that an authenticated user can create a new borrowing,
+        and verifies that notifications are sent via Telegram and Stripe.
+        """
         future_date = (timezone.now() + timezone.timedelta(days=1)).date()
         data = {
             "borrow_date": str(future_date),

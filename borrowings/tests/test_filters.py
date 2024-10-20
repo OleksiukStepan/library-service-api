@@ -14,6 +14,13 @@ User = get_user_model()
 
 
 class BorrowingFilterTest(TestCase):
+    """
+    Test case for filtering borrowings in the Borrowing ViewSet.
+
+    This test case includes tests for filtering borrowings by active status
+    and by user ID, ensuring that the filters work correctly for authenticated users.
+    """
+
     def setUp(self):
         self.client = APIClient()
         self.user1 = User.objects.create_user(
@@ -74,6 +81,12 @@ class BorrowingFilterTest(TestCase):
         self.client.login(email="test_admin@example.com", password="1qazcde3")
 
     def test_filter_by_is_active(self):
+        """
+        Test filtering borrowings by active status.
+
+        This test checks that an admin user can filter borrowings
+        that are currently active (i.e., have not been returned yet).
+        """
         self.client.force_authenticate(user=self.admin)
         response = self.client.get(self.url, {"is_active": "true"})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -81,6 +94,12 @@ class BorrowingFilterTest(TestCase):
         self.assertEqual(len(response.data), borrowings.count())
 
     def test_filter_by_user_id(self):
+        """
+        Test filtering borrowings by user ID.
+
+        This test checks that an admin user can filter borrowings
+        based on the user who borrowed the book.
+        """
         self.client.force_authenticate(user=self.admin)
         response = self.client.get(self.url, {"user_id": self.user1.id})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -88,6 +107,13 @@ class BorrowingFilterTest(TestCase):
         self.assertEqual(len(response.data), borrowings.count())
 
     def test_filter_by_is_active_and_user_id(self):
+        """
+       Test filtering borrowings by active status and user ID.
+
+       This test checks that an admin user can filter borrowings
+       that are currently active and belong to a specific user.
+       """
+
         self.client.force_authenticate(user=self.admin)
         response = self.client.get(
             self.url, {"is_active": "true", "user_id": self.user1.id}

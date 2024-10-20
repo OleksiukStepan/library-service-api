@@ -16,6 +16,13 @@ User = get_user_model()
 
 
 class BorrowingViewSetTest(TestCase):
+    """
+    Test case for the Borrowing ViewSet.
+
+    This test case includes tests for listing, retrieving, creating, and returning borrowings,
+    ensuring that permissions and operations work correctly for both regular users and administrators.
+    """
+
     def setUp(self):
         self.client = APIClient()
         self.user = User.objects.create_user(
@@ -28,7 +35,7 @@ class BorrowingViewSetTest(TestCase):
             first_name="first_admin_name",
             last_name="last_admin_name",
             email="admin@example.com",
-            password="adminpassword"
+            password="adminpassword",
         )
         self.book = Book.objects.create(
             title="Test Book",
@@ -52,6 +59,12 @@ class BorrowingViewSetTest(TestCase):
         )
 
     def test_get_borrowing_list(self):
+        """
+        Test retrieving the borrowing list.
+
+        This test checks that an authenticated user can retrieve a list of borrowings.
+        """
+
         self.client.force_authenticate(user=self.user)
         response = self.client.get(self.url_list)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -59,6 +72,11 @@ class BorrowingViewSetTest(TestCase):
         self.assertEqual(response.data[0]["id"], self.borrowing.id)
 
     def test_get_borrowing_detail(self):
+        """
+        Test retrieving borrowing details.
+
+        This test checks that an authenticated user can retrieve the details of a specific borrowing.
+        """
         self.client.force_authenticate(user=self.user)
         response = self.client.get(self.url_detail)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -67,11 +85,19 @@ class BorrowingViewSetTest(TestCase):
     @patch("borrowings.views.send_telegram_message")
     @patch("borrowings.views.create_stripe_session")
     def test_create_borrowing(self, create_stripe_session, mock_send_telegram_message):
+        """
+        Test creating a new borrowing.
+
+        This test checks that an authenticated user can create a new borrowing,
+        and verifies that the book inventory is updated and notifications are sent.
+        """
         self.client.force_authenticate(user=self.user)
         data = {
             "book": self.book.id,
             "borrow_date": str(timezone.now().date() + timezone.timedelta(days=1)),
-            "expected_return_date": str(timezone.now().date() + timezone.timedelta(days=10)),
+            "expected_return_date": str(
+                timezone.now().date() + timezone.timedelta(days=10)
+            ),
         }
         response = self.client.post(self.url_list, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -83,6 +109,13 @@ class BorrowingViewSetTest(TestCase):
         mock_send_telegram_message.assert_called_once()  # Inventory should decrease
 
     def test_return_borrowing_success(self):
+        """
+        Test successfully returning a borrowing.
+
+        This test checks that an admin can mark a borrowing as returned,
+        and verifies that the book inventory is updated.
+        """
+
         self.client.force_authenticate(user=self.admin)
         response = self.client.post(self.url_return)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -92,6 +125,12 @@ class BorrowingViewSetTest(TestCase):
         self.assertEqual(self.book.inventory, 11)  # Inventory should increase
 
     def test_return_borrowing_already_returned(self):
+        """
+        Test returning a borrowing that has already been returned.
+
+        This test checks that a validation error is raised if an admin
+        attempts to mark a borrowing as returned when it has already been returned.
+        """
         self.client.force_authenticate(user=self.admin)
         self.borrowing.actual_return_date = timezone.now().date()
         self.borrowing.save()
@@ -101,6 +140,11 @@ class BorrowingViewSetTest(TestCase):
         self.assertEqual(response.data["error"], "This book has already been returned")
 
     def test_admin_can_see_all_borrowings(self):
+        """
+        Test that an admin can see all borrowings.
+
+        This test checks that an admin can retrieve a list of all borrowings.
+        """
         self.client.force_authenticate(user=self.admin)
         response = self.client.get(self.url_list)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
