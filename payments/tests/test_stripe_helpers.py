@@ -36,7 +36,8 @@ class TestCreateStripeSession(TestCase):
         call_command("loaddata", "data.json")
 
     @classmethod
-    def tearDownClass(cls): ...
+    def tearDownClass(cls):
+        ...
 
     def tearDown(self):
         self.patcher.stop()
@@ -75,6 +76,7 @@ class TestCreateStripeSession(TestCase):
                 }
             ],
             mode="payment",
+            locale="en",
             success_url=PAYMENT_SUCCESS_URL,
             cancel_url=PAYMENT_CANCEL_ULR,
         )
@@ -113,6 +115,7 @@ class TestCreateStripeSession(TestCase):
                 }
             ],
             mode="payment",
+            locale="en",
             success_url=PAYMENT_SUCCESS_URL,
             cancel_url=PAYMENT_CANCEL_ULR,
         )
