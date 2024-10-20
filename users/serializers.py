@@ -21,11 +21,13 @@ class UserSerializer(serializers.ModelSerializer):
             "id",
             "is_staff",
         )
-        extra_kwargs = {"password": {
-            "write_only": True,
-            "min_length": 8,
-            "style": {"input_type": "password"},
-        }}
+        extra_kwargs = {
+            "password": {
+                "write_only": True,
+                "min_length": 8,
+                "style": {"input_type": "password"},
+            }
+        }
 
     def create(self, validated_data: dict) -> User:
         """Create and return a new user with encrypted password."""

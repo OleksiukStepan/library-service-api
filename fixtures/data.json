@@ -4,7 +4,7 @@
     "pk": 1,
     "fields": {
       "password": "pbkdf2_sha256$870000$azVfSz37fheV43EyTmaEMA$t8aGXk5/8/4HGP3M3zVzzl3enSWpt3jYrxMR+cpVqew=",
-      "last_login": "2024-10-19T11:22:22.473Z",
+      "last_login": "2024-10-20T16:52:28.525Z",
       "is_superuser": true,
       "is_staff": true,
       "is_active": true,
@@ -54,6 +54,24 @@
     }
   },
   {
+    "model": "users.user",
+    "pk": 4,
+    "fields": {
+      "password": "pbkdf2_sha256$870000$7IwWk09CzOfLkCihOsgDoL$CatSpeEzivnu6EHHToYkCZViXmRlBi+pJKp+GHoWb14=",
+      "last_login": null,
+      "is_superuser": false,
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2024-10-18T06:26:24Z",
+      "email": "user@library.com",
+      "first_name": "John",
+      "last_name": "Doe",
+      "telegram_chat_id": null,
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
     "model": "books.book",
     "pk": 1,
     "fields": {
@@ -96,7 +114,7 @@
       "title": "The Great Gatsby",
       "author": "F. Scott Fitzgerald",
       "cover": "SOFT",
-      "inventory": 10,
+      "inventory": 9,
       "daily_fee": "0.65",
       "image": "uploads/books/the-great-gatsby-ef560902-ddce-44d5-af99-06d8000dff89.jpg"
     }
@@ -108,7 +126,7 @@
       "title": "The Master and Margarita",
       "author": "Mikhail Bulgakov",
       "cover": "HARD",
-      "inventory": 25,
+      "inventory": 24,
       "daily_fee": "0.80",
       "image": "uploads/books/the-master-and-margarita-ab1c9f27-1c7a-4ee7-b69c-d6ad200b5d95.jpg"
     }
@@ -144,7 +162,7 @@
       "title": "Pride and Prejudice",
       "author": "Jane Austen",
       "cover": "SOFT",
-      "inventory": 20,
+      "inventory": 19,
       "daily_fee": "0.55",
       "image": "uploads/books/pride-and-prejudice-e1359766-99e3-40ed-b94a-8c2784804206.jpg"
     }
@@ -264,6 +282,61 @@
     }
   },
   {
+    "model": "borrowings.borrowing",
+    "pk": 7,
+    "fields": {
+      "borrow_date": "2024-10-19",
+      "expected_return_date": "2024-10-25",
+      "actual_return_date": "2024-10-20",
+      "book": 1,
+      "user": 2
+    }
+  },
+  {
+    "model": "borrowings.borrowing",
+    "pk": 8,
+    "fields": {
+      "borrow_date": "2024-10-20",
+      "expected_return_date": "2024-10-21",
+      "actual_return_date": "2024-10-20",
+      "book": 1,
+      "user": 2
+    }
+  },
+  {
+    "model": "borrowings.borrowing",
+    "pk": 9,
+    "fields": {
+      "borrow_date": "2024-10-20",
+      "expected_return_date": "2024-10-22",
+      "actual_return_date": null,
+      "book": 4,
+      "user": 1
+    }
+  },
+  {
+    "model": "borrowings.borrowing",
+    "pk": 10,
+    "fields": {
+      "borrow_date": "2024-10-20",
+      "expected_return_date": "2024-10-21",
+      "actual_return_date": null,
+      "book": 5,
+      "user": 4
+    }
+  },
+  {
+    "model": "borrowings.borrowing",
+    "pk": 11,
+    "fields": {
+      "borrow_date": "2024-10-21",
+      "expected_return_date": "2024-10-27",
+      "actual_return_date": null,
+      "book": 8,
+      "user": 4
+    }
+  },
+  {
     "model": "payments.payment",
     "pk": 1,
     "fields": {
@@ -357,6 +430,42 @@
       "session_url": "https://checkout.stripe.com/c/pay/cs_test_a15i3PHLuHx0cMVJLh4QXNFa7PvUEcpPIT3bmWfyMpataOOfz8yoE9WM5L#fidkdWxOYHwnPyd1blpxYHZxWjA0VER9ZHVPcVN%2FdzBQXUZRaHBMS3ZzaGNrQTJEN0xob25PMmR0RjAxaVU9an9KTTNJTjVTM1Z0QU1JV2xPTFZqZkBqfHxBbHdOPURnRGRzc2dTVzxQc3xINTVCMH0xQGliYScpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl",
       "session_id": "cs_test_a15i3PHLuHx0cMVJLh4QXNFa7PvUEcpPIT3bmWfyMpataOOfz8yoE9WM5L",
       "money_to_pay": "8.40"
+    }
+  },
+  {
+    "model": "payments.payment",
+    "pk": 9,
+    "fields": {
+      "status": "PENDING",
+      "type": "PAYMENT",
+      "borrowing": 9,
+      "session_url": "https://checkout.stripe.com/c/pay/cs_test_a1AN3QGwbVyJoVFBVyKdUkFsyMM4PRcB3vNKG3e72x6y0J31aq7xxf1B6P#fidpamZkaWAnPydgaycpJ2R1bE5gfCc%2FJ3VuWnFgdnFaMDRURH1kdU9xU393MFBdRlFocExLdnNoY2tBMkQ3TGhvbk8yZHRGMDFpVT1qf0pNM0lONVMzVnRBTUlXbE9MVmpmQGp8fEFsd049RGdEZHNzZ1NXPFBzfEg1NUIwfTFAaWJhJyknY3dqaFZgd3Ngdyc%2FcXdwYCknaWR8anBxUXx1YCc%2FJ3Zsa2JpYFpscWBoJyknYGtkZ2lgVWlkZmBtamlhYHd2Jz9xd3BgeCUl",
+      "session_id": "cs_test_a1AN3QGwbVyJoVFBVyKdUkFsyMM4PRcB3vNKG3e72x6y0J31aq7xxf1B6P",
+      "money_to_pay": "1.30"
+    }
+  },
+  {
+    "model": "payments.payment",
+    "pk": 10,
+    "fields": {
+      "status": "PAID",
+      "type": "PAYMENT",
+      "borrowing": 10,
+      "session_url": "https://checkout.stripe.com/c/pay/cs_test_a1sYEMghkRkK5A4nxB9ajsSFU5ckI0PIMfWZniZZQCYvw9XC0nmeGbsMIp#fidpamZkaWAnPydgaycpJ2R1bE5gfCc%2FJ3VuWnFgdnFaMDRURH1kdU9xU393MFBdRlFocExLdnNoY2tBMkQ3TGhvbk8yZHRGMDFpVT1qf0pNM0lONVMzVnRBTUlXbE9MVmpmQGp8fEFsd049RGdEZHNzZ1NXPFBzfEg1NUIwfTFAaWJhJyknY3dqaFZgd3Ngdyc%2FcXdwYCknaWR8anBxUXx1YCc%2FJ3Zsa2JpYFpscWBoJyknYGtkZ2lgVWlkZmBtamlhYHd2Jz9xd3BgeCUl",
+      "session_id": "cs_test_a1sYEMghkRkK5A4nxB9ajsSFU5ckI0PIMfWZniZZQCYvw9XC0nmeGbsMIp",
+      "money_to_pay": "0.80"
+    }
+  },
+  {
+    "model": "payments.payment",
+    "pk": 11,
+    "fields": {
+      "status": "PENDING",
+      "type": "PAYMENT",
+      "borrowing": 11,
+      "session_url": "https://checkout.stripe.com/c/pay/cs_test_a1TOujpPRQKmxAtZ46hstqB3fGlB4eN1okId0zFMXr8BBlNtgWIMbXZGU4#fidpamZkaWAnPydgaycpJ2R1bE5gfCc%2FJ3VuWnFgdnFaMDRURH1kdU9xU393MFBdRlFocExLdnNoY2tBMkQ3TGhvbk8yZHRGMDFpVT1qf0pNM0lONVMzVnRBTUlXbE9MVmpmQGp8fEFsd049RGdEZHNzZ1NXPFBzfEg1NUIwfTFAaWJhJyknY3dqaFZgd3Ngdyc%2FcXdwYCknaWR8anBxUXx1YCc%2FJ3Zsa2JpYFpscWBoJyknYGtkZ2lgVWlkZmBtamlhYHd2Jz9xd3BgeCUl",
+      "session_id": "cs_test_a1TOujpPRQKmxAtZ46hstqB3fGlB4eN1okId0zFMXr8BBlNtgWIMbXZGU4",
+      "money_to_pay": "3.30"
     }
   }
 ]
