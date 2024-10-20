@@ -69,7 +69,8 @@ class PaymentSuccessView(APIView):
             send_telegram_message(message)
 
             return Response(
-                {"message": "Payment successful"}, status=status.HTTP_200_OK
+                {"message": "Payment successful"},
+                status=status.HTTP_200_OK
             )
         else:
             return Response(
@@ -89,8 +90,10 @@ class PaymentCancelView(APIView):
 
     def get(self, request):
         return Response(
-            {"message": "Payment was cancelled. "
-                        "You can try again within 24 hours."},
+            {
+                "message":
+                    "Payment was cancelled. You can try again within 24 hours."
+            },
             status=status.HTTP_200_OK,
         )
 
@@ -111,10 +114,11 @@ class RenewPaymentSessionView(APIView):
         payment = get_object_or_404(
             Payment.objects.select_related("borrowing__book"),
             pk=pk,
-            status=Payment.Status.EXPIRED
+            status=Payment.Status.EXPIRED,
         )
         renew_stripe_session(payment, request)
 
         return Response(
-            {"message": "Payment session renewed"}, status=status.HTTP_200_OK
+            {"message": "Payment session renewed"},
+            status=status.HTTP_200_OK
         )
