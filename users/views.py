@@ -13,7 +13,6 @@ User = get_user_model()
 class CreateUserView(generics.CreateAPIView):
     """
     API view for creating a new user.
-
     Uses the UserSerializer for validation and creation.
     No authentication or permission is required.
     """
@@ -28,7 +27,6 @@ class CreateUserView(generics.CreateAPIView):
 class ManageUserView(generics.RetrieveUpdateAPIView):
     """
     API view for retrieving or updating the authenticated user's details.
-
     Requires JWT authentication.
     """
 
