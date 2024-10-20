@@ -59,7 +59,7 @@ These instructions will help you set up the Library Management System for develo
 To load sample data:
 ```sh
 docker exec -it <your_container_name> sh
-python manage.py loaddata data.json
+python manage.py loaddata fixtures/data.json
 ```
 
 #### Creating a Superuser:
