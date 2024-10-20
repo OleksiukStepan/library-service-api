@@ -15,7 +15,6 @@ from datetime import timedelta
 from pathlib import Path
 
 from dotenv import load_dotenv
-from rest_framework import authentication
 
 
 load_dotenv()
@@ -181,15 +180,22 @@ else:
 AUTH_USER_MODEL = "users.User"
 
 REST_FRAMEWORK = {
+    # FILTER
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend"
+    ],
+    # JWT
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
+    # SPECTACULAR
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    # THROTTLING
     "DEFAULT_THROTTLE_CLASSES": [
         "rest_framework.throttling.AnonRateThrottle",
         "rest_framework.throttling.UserRateThrottle",
     ],
     "DEFAULT_THROTTLE_RATES": {"anon": "50/day", "user": "250/day"},
-    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 SIMPLE_JWT = {
@@ -202,7 +208,11 @@ SIMPLE_JWT = {
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "Library API",
-    "DESCRIPTION": "Borrow books",
+    "DESCRIPTION":
+        "A project to modernize library management by creating "
+        "a web-based system for book inventory, borrowings, "
+        "customer management, and payments using Django REST Framework, "
+        "with Stripe integration and Telegram notifications",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
     "SWAGGER_UI_SETTINGS": {
@@ -233,6 +243,7 @@ CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 
 # additional path to find fixtures for tests
+
 FIXTURE_DIRS = [
     os.path.join(BASE_DIR, "payments", "tests", "fixtures"),
 ]
