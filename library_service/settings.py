@@ -180,6 +180,10 @@ else:
 AUTH_USER_MODEL = "users.User"
 
 REST_FRAMEWORK = {
+    # PAGINATION
+    "DEFAULT_PAGINATION_CLASS":
+        "rest_framework.pagination.LimitOffsetPagination",
+    "PAGE_SIZE": 5,
     # FILTER
     "DEFAULT_FILTER_BACKENDS": [
         "django_filters.rest_framework.DjangoFilterBackend"
@@ -245,5 +249,5 @@ CELERY_TASK_TIME_LIMIT = 30 * 60
 # additional path to find fixtures for tests
 
 FIXTURE_DIRS = [
-    os.path.join(BASE_DIR, "payments", "tests", "fixtures"),
+    os.path.join(BASE_DIR, "fixtures"),
 ]
