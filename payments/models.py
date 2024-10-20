@@ -24,7 +24,9 @@ class Payment(models.Model):
     session_url = models.TextField()
     session_id = models.CharField(max_length=255)
     money_to_pay = models.DecimalField(
-        max_digits=8, decimal_places=2, validators=[MinValueValidator(Decimal("0.01"))]
+        max_digits=8,
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal("0.01"))]
     )
 
     def __str__(self):

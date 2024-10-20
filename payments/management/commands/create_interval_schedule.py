@@ -17,6 +17,10 @@ class Command(BaseCommand):
         )
 
         if created:
-            self.stdout.write(self.style.SUCCESS("Successfully created interval task"))
+            self.stdout.write(
+                self.style.SUCCESS("Successfully created interval task")
+            )
         else:
-            self.stdout.write(self.style.SUCCESS("Interval task already exists"))
+            self.stdout.write(
+                self.style.SUCCESS("Interval task already exists")
+            )

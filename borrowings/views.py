@@ -43,12 +43,11 @@ class BorrowingViewSet(ModelViewSet):
         Regular users only see their own borrowings.
         """
         user = self.request.user
+        queryset = Borrowing.objects.select_related("user", "book")
         if user.is_staff:
-            return Borrowing.objects.select_related("user", "book")
-        return (
-            Borrowing.objects.select_related("user", "book")
-            .filter(user=user)
-        )
+            return queryset
+        return queryset.filter(user=user)
+
 
     def get_serializer_class(self) -> type(Serializer):
         if self.action == "list":
