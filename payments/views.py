@@ -1,12 +1,15 @@
 import stripe
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from notifications.tasks import send_telegram_message
 from payments.models import Payment
 from payments.serializers import PaymentUserSerializer, PaymentStaffSerializer
+from payments.stripe_helpers import renew_stripe_session
 
 
 class PaymentViewSet(viewsets.ReadOnlyModelViewSet):
@@ -24,6 +27,7 @@ class PaymentViewSet(viewsets.ReadOnlyModelViewSet):
             return PaymentStaffSerializer
         return PaymentUserSerializer
 
+
 class PaymentSuccessView(APIView):
     def get(self, request):
         session_id = request.query_params.get("session_id")
@@ -33,6 +37,13 @@ class PaymentSuccessView(APIView):
         if session.payment_status == "paid":
             payment.status = Payment.Status.PAID
             payment.save()
+            message = (
+                f"{payment.get_type_display()} for borrowing "
+                f"(ID: {payment.borrowing.id}):\n"
+                f"Amount: $ {payment.money_to_pay}\n"
+                f"User: {payment.borrowing.user.email}"
+            )
+            send_telegram_message(message)
 
             return Response({"message": "Payment successful"}, status=200)
         else:
@@ -44,4 +55,16 @@ class PaymentCancelView(APIView):
         return Response(
             {"message": "Payment was cancelled. You can try again within 24 hours."},
             status=200,
+        )
+
+
+class RenewPaymentSessionView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request: Request, pk: int) -> Response:
+        payment = get_object_or_404(Payment, pk=pk, status=Payment.Status.EXPIRED)
+        renew_stripe_session(payment, request)
+
+        return Response(
+            {"message": "Payment session renewed"}, status=status.HTTP_200_OK
         )

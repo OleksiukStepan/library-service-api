@@ -7,6 +7,8 @@ from users.models import User
 
 @admin.register(User)
 class UserAdmin(UserAdmin):
+    """Custom admin interface for the User model."""
+
     fieldsets = (
         (None, {"fields": ("email", "password")}),
         (_("Personal info"), {"fields": ("first_name", "last_name")}),

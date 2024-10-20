@@ -5,12 +5,12 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import ModelSerializer
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from django.db.models import QuerySet
 from django_filters.rest_framework import DjangoFilterBackend
 
 from borrowings.models import Borrowing
+from borrowings.permissions import IsAdminOrIfAuthenticatedReadOnly
 from borrowings.serializers import (
     BorrowingSerializer,
     BorrowingListSerializer,
@@ -30,7 +30,7 @@ class BorrowingViewSet(ModelViewSet):
     Admin users can see all borrowings, while regular users can only see their own.
     Supports filtering by `is_active` and `user_id` parameters.
     """
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
     filterset_class = BorrowingFilter
     filter_backends = [DjangoFilterBackend]
 
