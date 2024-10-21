@@ -2,6 +2,7 @@ import os
 import uuid
 from decimal import Decimal
 
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.text import slugify
@@ -13,6 +14,11 @@ def books_image_file_path(instance: "Book", filename: str) -> str:
 
     return os.path.join("uploads/books/", filename)
 
+def validate_image_size(image):
+    max_size_mb = 10
+
+    if image.size > max_size_mb * 1024 * 1024:
+        raise ValidationError(f"Image size can't exceed {max_size_mb} MB.")
 
 class Book(models.Model):
     class CoverType(models.TextChoices):
@@ -29,7 +35,10 @@ class Book(models.Model):
         validators=[MinValueValidator(Decimal("0.01"))]
     )
     image = models.ImageField(
-        upload_to=books_image_file_path, null=True, blank=True
+        upload_to=books_image_file_path,
+        null=True,
+        blank=True,
+        validators=[validate_image_size],
     )
 
     def __str__(self):
