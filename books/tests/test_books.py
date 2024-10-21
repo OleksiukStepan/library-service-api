@@ -23,7 +23,7 @@ class PublicBookApiTests(TestCase):
     """Tests for public access to the book API."""
 
     def setUp(self) -> None:
-        """Set up the API client for tests."""
+        """Set up the API client for test."""
         self.client = APIClient()
 
     def test_filter_books_by_title(self) -> None:
