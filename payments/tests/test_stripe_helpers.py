@@ -31,18 +31,19 @@ PAYMENT_CANCEL_ULR = request.build_absolute_uri(
 
 
 class TestCreateStripeSession(TestCase):
+    """Test cases for creating a Stripe session and associated payments."""
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         call_command("loaddata", "data.json")
 
     @classmethod
-    def tearDownClass(cls):
+    def tearDownClass(cls) -> None:
         ...
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         self.patcher.stop()
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.user = get_user_model().objects.get(pk=2)
         self.client.force_login(self.user)
         self.patcher = patch("stripe.checkout.Session.create")
@@ -51,7 +52,11 @@ class TestCreateStripeSession(TestCase):
             id=TEST_SESSION_ID, url=TEST_SESSION_URL
         )
 
-    def test_create_stripe_session_and_primary_payment(self):
+    def test_create_stripe_session_and_primary_payment(self) -> None:
+        """
+        Test that creating a borrowing creates 
+        a Stripe session and a primary payment.
+        """
         borrowing = Borrowing.objects.create(
             user=self.user,
             book=Book.objects.first(),
@@ -89,7 +94,11 @@ class TestCreateStripeSession(TestCase):
         self.assertEqual(payment.session_url, TEST_SESSION_URL)
         self.assertEqual(payment.money_to_pay, unit_amount / 100)
 
-    def test_create_stripe_session_and_fine_payment(self):
+    def test_create_stripe_session_and_fine_payment(self) -> None:
+        """
+        Test that creating an overdue borrowing creates 
+        a Stripe session and a fine payment.
+        """
         borrowing = Borrowing.objects.create(
             user=self.user,
             book=Book.objects.first(),
@@ -128,7 +137,10 @@ class TestCreateStripeSession(TestCase):
         self.assertEqual(payment.session_url, TEST_SESSION_URL)
         self.assertEqual(payment.money_to_pay, fine_unit_amount / 100)
 
-    def test_no_create_stripe_session(self):
+    def test_no_create_stripe_session(self) -> None:
+        """
+        Test that no new Stripe session is created if a payment already exists.
+        """
         borrowing = Borrowing.objects.first()
         payment_before = Payment.objects.filter(borrowing=borrowing)
 
@@ -142,25 +154,29 @@ class TestCreateStripeSession(TestCase):
 
 
 class TestRenewStripeSession(TestCase):
+    """Test cases for renewing a Stripe session for expired payments."""
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         call_command("loaddata", "data.json")
 
     @classmethod
-    def tearDownClass(cls):
+    def tearDownClass(cls) -> None:
         ...
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         self.patcher.stop()
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.patcher = patch("stripe.checkout.Session.create")
         self.mock_stripe_create_session = self.patcher.start()
         self.mock_stripe_create_session.return_value = MagicMock(
             id=TEST_SESSION_ID, url=TEST_SESSION_URL
         )
 
-    def test_renew_stripe_session(self):
+    def test_renew_stripe_session(self) -> None:
+        """
+        Test that renewing an expired payment creates a new Stripe session.
+        """
         payment = Payment.objects.filter(pk=3).select_related(
             "borrowing__book").first()
         payment.status = "EXPIRED"
