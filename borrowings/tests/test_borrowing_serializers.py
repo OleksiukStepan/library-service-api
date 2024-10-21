@@ -74,8 +74,8 @@ class BorrowingViewSetTest(TestCase):
         self.client.force_authenticate(user=self.user)
         response = self.client.get(self.url_list)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]["id"], self.borrowing.id)
+        self.assertEqual(len(response.data["results"]), 1)
+        self.assertEqual(response.data["results"][0]["id"], self.borrowing.id)
 
     def test_get_borrowing_detail(self) -> None:
         """
@@ -166,4 +166,4 @@ class BorrowingViewSetTest(TestCase):
         self.client.force_authenticate(user=self.admin)
         response = self.client.get(self.url_list)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(len(response.data["results"]), 1)

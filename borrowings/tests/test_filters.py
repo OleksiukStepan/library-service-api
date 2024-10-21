@@ -90,7 +90,7 @@ class BorrowingFilterTest(TestCase):
         response = self.client.get(self.url, {"is_active": "true"})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         borrowings = Borrowing.objects.filter(actual_return_date__isnull=True)
-        self.assertEqual(len(response.data), borrowings.count())
+        self.assertEqual(len(response.data["results"]), borrowings.count())
 
     def test_filter_by_user_id(self) -> None:
         """
@@ -103,7 +103,7 @@ class BorrowingFilterTest(TestCase):
         response = self.client.get(self.url, {"user_id": self.user1.id})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         borrowings = Borrowing.objects.filter(user=self.user1)
-        self.assertEqual(len(response.data), borrowings.count())
+        self.assertEqual(len(response.data["results"]), borrowings.count())
 
     def test_filter_by_is_active_and_user_id(self) -> None:
         """
@@ -121,4 +121,4 @@ class BorrowingFilterTest(TestCase):
         borrowings = Borrowing.objects.filter(
             actual_return_date__isnull=True, user=self.user1
         )
-        self.assertEqual(len(response.data), borrowings.count())
+        self.assertEqual(len(response.data["results"]), borrowings.count())

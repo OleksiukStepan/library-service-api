@@ -73,7 +73,7 @@ class BorrowingViewSetTest(TestCase):
         borrowings = Borrowing.objects.all()
         serializer = BorrowingListSerializer(borrowings, many=True)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data, serializer.data)
+        self.assertEqual(response.data["results"], serializer.data)
 
     def test_get_borrowing_detail(self) -> None:
         """
