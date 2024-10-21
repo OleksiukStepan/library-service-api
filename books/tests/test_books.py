@@ -23,8 +23,58 @@ class PublicBookApiTests(TestCase):
     """Tests for public access to the book API."""
 
     def setUp(self) -> None:
-        """Set up the API client for tests."""
+        """Set up the API client for test."""
         self.client = APIClient()
+
+    def test_filter_books_by_title(self) -> None:
+        """Test filtering books by title."""
+        book1 = Book.objects.create(
+            title="Harry Potter",
+            author="J.K. Rowling",
+            cover=Book.CoverType.HARD,
+            inventory=5,
+            daily_fee=Decimal("1.50"),
+        )
+        book2 = Book.objects.create(
+            title="The Hobbit",
+            author="J.R.R. Tolkien",
+            cover=Book.CoverType.SOFT,
+            inventory=10,
+            daily_fee=Decimal("2.00"),
+        )
+
+        res = self.client.get(BOOKS_URL, {"title": "harry"})
+
+        serializer1 = BookSerializer(book1)
+        serializer2 = BookSerializer(book2)
+
+        self.assertIn(serializer1.data, res.data["results"])
+        self.assertNotIn(serializer2.data, res.data["results"])
+
+    def test_filter_books_by_author(self) -> None:
+        """Test filtering books by author."""
+        book1 = Book.objects.create(
+            title="Harry Potter",
+            author="J.K. Rowling",
+            cover=Book.CoverType.HARD,
+            inventory=5,
+            daily_fee=Decimal("1.50"),
+        )
+        book2 = Book.objects.create(
+            title="The Hobbit",
+            author="J.R.R. Tolkien",
+            cover=Book.CoverType.SOFT,
+            inventory=10,
+            daily_fee=Decimal("2.00"),
+        )
+
+        res = self.client.get(BOOKS_URL, {"author": "tolkien"})
+
+        serializer1 = BookSerializer(book1)
+        serializer2 = BookSerializer(book2)
+
+        self.assertNotIn(serializer1.data, res.data["results"])
+        self.assertIn(serializer2.data, res.data["results"])
 
     def test_retrieve_books_ordered_by_title(self) -> None:
         """Test retrieving a list of books ordered by title."""
@@ -48,56 +98,7 @@ class PublicBookApiTests(TestCase):
         books = Book.objects.all().order_by("title")
         serializer = BookSerializer(books, many=True)
 
-        self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, serializer.data)
-
-    def test_filter_books_by_title(self) -> None:
-        """Test filtering books by title."""
-        book1 = Book.objects.create(
-            title="Harry Potter",
-            author="J.K. Rowling",
-            cover=Book.CoverType.HARD,
-            inventory=5,
-            daily_fee=Decimal("1.50"),
-        )
-        book2 = Book.objects.create(
-            title="The Hobbit",
-            author="J.R.R. Tolkien",
-            cover=Book.CoverType.SOFT,
-            inventory=10,
-            daily_fee=Decimal("2.00"),
-        )
-
-        res = self.client.get(BOOKS_URL, {"title": "harry"})
-
-        serializer1 = BookSerializer(book1)
-        serializer2 = BookSerializer(book2)
-        self.assertIn(serializer1.data, res.data)
-        self.assertNotIn(serializer2.data, res.data)
-
-    def test_filter_books_by_author(self) -> None:
-        """Test filtering books by author."""
-        book1 = Book.objects.create(
-            title="Harry Potter",
-            author="J.K. Rowling",
-            cover=Book.CoverType.HARD,
-            inventory=5,
-            daily_fee=Decimal("1.50"),
-        )
-        book2 = Book.objects.create(
-            title="The Hobbit",
-            author="J.R.R. Tolkien",
-            cover=Book.CoverType.SOFT,
-            inventory=10,
-            daily_fee=Decimal("2.00"),
-        )
-
-        res = self.client.get(BOOKS_URL, {"author": "tolkien"})
-
-        serializer1 = BookSerializer(book1)
-        serializer2 = BookSerializer(book2)
-        self.assertNotIn(serializer1.data, res.data)
-        self.assertIn(serializer2.data, res.data)
+        self.assertEqual(res.data["results"], serializer.data)
 
     def test_create_book_unauthorized(self) -> None:
         """Test creating a book when unauthorized."""
