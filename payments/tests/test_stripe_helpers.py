@@ -11,7 +11,7 @@ from django.urls import reverse
 from books.models import Book
 from borrowings.models import Borrowing
 from payments.models import Payment
-from payments.stripe_helpers import create_stripe_session
+from payments.stripe_helpers import create_stripe_session, renew_stripe_session
 
 TEST_SESSION_ID = "test_session_id"
 TEST_SESSION_URL = "https://test.url"
@@ -139,3 +139,53 @@ class TestCreateStripeSession(TestCase):
 
         self.mock_stripe_create_session.assert_not_called()
         self.assertEqual(list(payment_before), list(payment_after))
+
+
+class TestRenewStripeSession(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        call_command("loaddata", "data.json")
+
+    @classmethod
+    def tearDownClass(cls):
+        ...
+
+    def tearDown(self):
+        self.patcher.stop()
+
+    def setUp(self):
+        self.patcher = patch("stripe.checkout.Session.create")
+        self.mock_stripe_create_session = self.patcher.start()
+        self.mock_stripe_create_session.return_value = MagicMock(
+            id=TEST_SESSION_ID, url=TEST_SESSION_URL
+        )
+
+    def test_renew_stripe_session(self):
+        payment = Payment.objects.filter(pk=3).select_related(
+            "borrowing__book").first()
+        payment.status = "EXPIRED"
+        payment.save()
+
+        renew_stripe_session(payment, request)
+
+        self.mock_stripe_create_session.assert_called_once_with(
+            payment_method_types=["card"],
+            line_items=[
+                {
+                    "price_data": {
+                        "currency": "usd",
+                        "product_data": {"name": payment.borrowing.book.title},
+                        "unit_amount": int(payment.money_to_pay * 100),
+                    },
+                    "quantity": 1,
+                }
+            ],
+            mode="payment",
+            locale="en",
+            success_url=PAYMENT_SUCCESS_URL,
+            cancel_url=PAYMENT_CANCEL_ULR,
+        )
+
+        self.assertEqual(payment.status, Payment.Status.PENDING)
+        self.assertEqual(payment.session_id, TEST_SESSION_ID)
+        self.assertEqual(payment.session_url, TEST_SESSION_URL)
