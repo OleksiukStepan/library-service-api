@@ -1,0 +1,471 @@
+[
+  {
+    "model": "users.user",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2_sha256$870000$azVfSz37fheV43EyTmaEMA$t8aGXk5/8/4HGP3M3zVzzl3enSWpt3jYrxMR+cpVqew=",
+      "last_login": "2024-10-20T16:52:28.525Z",
+      "is_superuser": true,
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2024-10-18T05:42:11.113Z",
+      "email": "admin@admin.com",
+      "first_name": "admin first name",
+      "last_name": "admin last name",
+      "telegram_chat_id": null,
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 2,
+    "fields": {
+      "password": "pbkdf2_sha256$870000$BVpRiksWdOPhTtxoiwodGt$r2lkBry2kPN+be8PrVCLzEg8Vs8xqXQPh5erbrAD6DQ=",
+      "last_login": null,
+      "is_superuser": false,
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2024-10-18T06:07:30Z",
+      "email": "user@user.com",
+      "first_name": "user first name",
+      "last_name": "user last name",
+      "telegram_chat_id": null,
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 3,
+    "fields": {
+      "password": "pbkdf2_sha256$870000$Fog7E52mSCVzaE3dNb39cR$5fHE12CsUIh/ORPPUj5MP5JSsOtGckdMof5fkrkK+kM=",
+      "last_login": null,
+      "is_superuser": false,
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2024-10-18T06:16:24Z",
+      "email": "overdue@overdue.com",
+      "first_name": "overdue first name",
+      "last_name": "overdue last name",
+      "telegram_chat_id": null,
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 4,
+    "fields": {
+      "password": "pbkdf2_sha256$870000$7IwWk09CzOfLkCihOsgDoL$CatSpeEzivnu6EHHToYkCZViXmRlBi+pJKp+GHoWb14=",
+      "last_login": null,
+      "is_superuser": false,
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2024-10-18T06:26:24Z",
+      "email": "user@library.com",
+      "first_name": "John",
+      "last_name": "Doe",
+      "telegram_chat_id": null,
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 1,
+    "fields": {
+      "title": "1984",
+      "author": "George Orwell",
+      "cover": "HARD",
+      "inventory": 14,
+      "daily_fee": "0.75",
+      "image": "uploads/books/1984-b3e661c2-92f7-4d7b-ab5d-7347e5b9e647.jpg"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 2,
+    "fields": {
+      "title": "To Kill a Mockingbird",
+      "author": "Harper Lee",
+      "cover": "SOFT",
+      "inventory": 20,
+      "daily_fee": "0.50",
+      "image": "uploads/books/to-kill-a-mockingbird-783b2ef1-3d54-4415-832b-31af59a0546c.jpg"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 3,
+    "fields": {
+      "title": "Harry Potter and the Philosopher's Stone",
+      "author": "J.K. Rowling",
+      "cover": "HARD",
+      "inventory": 19,
+      "daily_fee": "0.65",
+      "image": "uploads/books/harry-potter-and-the-philosophers-stone-929acf56-2edb-4162-8b65-352c9249faef.jpg"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 4,
+    "fields": {
+      "title": "The Great Gatsby",
+      "author": "F. Scott Fitzgerald",
+      "cover": "SOFT",
+      "inventory": 9,
+      "daily_fee": "0.65",
+      "image": "uploads/books/the-great-gatsby-ef560902-ddce-44d5-af99-06d8000dff89.jpg"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 5,
+    "fields": {
+      "title": "The Master and Margarita",
+      "author": "Mikhail Bulgakov",
+      "cover": "HARD",
+      "inventory": 24,
+      "daily_fee": "0.80",
+      "image": "uploads/books/the-master-and-margarita-ab1c9f27-1c7a-4ee7-b69c-d6ad200b5d95.jpg"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 6,
+    "fields": {
+      "title": "War and Peace",
+      "author": "Leo Tolstoy",
+      "cover": "SOFT",
+      "inventory": 7,
+      "daily_fee": "0.45",
+      "image": "uploads/books/war-and-peace-b6070dfe-ab5d-4cf2-b71e-f8b2bb768d8c.jpg"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 7,
+    "fields": {
+      "title": "Crime and Punishment",
+      "author": "Fyodor Dostoevsky",
+      "cover": "HARD",
+      "inventory": 12,
+      "daily_fee": "0.70",
+      "image": "uploads/books/crime-and-punishment-51049f50-ff1a-490e-a775-f1d9408e782a.jpg"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 8,
+    "fields": {
+      "title": "Pride and Prejudice",
+      "author": "Jane Austen",
+      "cover": "SOFT",
+      "inventory": 19,
+      "daily_fee": "0.55",
+      "image": "uploads/books/pride-and-prejudice-e1359766-99e3-40ed-b94a-8c2784804206.jpg"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 9,
+    "fields": {
+      "title": "The Little Prince",
+      "author": "Antoine de Saint-Exupery",
+      "cover": "HARD",
+      "inventory": 14,
+      "daily_fee": "0.60",
+      "image": "uploads/books/the-little-prince-4232070b-01a1-4cc5-bdf0-b10a4c72144f.jpg"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 10,
+    "fields": {
+      "title": "The Catcher in the Rye",
+      "author": "J.D. Salinger",
+      "cover": "SOFT",
+      "inventory": 9,
+      "daily_fee": "0.40",
+      "image": "uploads/books/the-catcher-in-the-rye-0da87b6d-ce36-4217-b5fd-aab68df94f01.jpg"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 11,
+    "fields": {
+      "title": "One Hundred Years of Solitude",
+      "author": "Gabriel Garcia Maquez",
+      "cover": "HARD",
+      "inventory": 12,
+      "daily_fee": "0.85",
+      "image": "uploads/books/one-hundred-years-of-solitude-6a80af09-e85a-4df6-9c72-b947a938d99b.jpg"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 12,
+    "fields": {
+      "title": "Dune",
+      "author": "Frank Herbert",
+      "cover": "SOFT",
+      "inventory": 5,
+      "daily_fee": "0.35",
+      "image": "uploads/books/dune-6b7661fc-14d7-43ff-aa58-1a562344ac18.jpg"
+    }
+  },
+  {
+    "model": "borrowings.borrowing",
+    "pk": 1,
+    "fields": {
+      "borrow_date": "2024-10-14",
+      "expected_return_date": "2024-10-20",
+      "actual_return_date": "2024-10-20",
+      "book": 1,
+      "user": 2
+    }
+  },
+  {
+    "model": "borrowings.borrowing",
+    "pk": 2,
+    "fields": {
+      "borrow_date": "2024-10-07",
+      "expected_return_date": "2024-10-13",
+      "actual_return_date": "2024-10-13",
+      "book": 3,
+      "user": 2
+    }
+  },
+  {
+    "model": "borrowings.borrowing",
+    "pk": 3,
+    "fields": {
+      "borrow_date": "2024-10-14",
+      "expected_return_date": "2024-10-27",
+      "actual_return_date": null,
+      "book": 12,
+      "user": 2
+    }
+  },
+  {
+    "model": "borrowings.borrowing",
+    "pk": 4,
+    "fields": {
+      "borrow_date": "2024-10-07",
+      "expected_return_date": "2024-10-13",
+      "actual_return_date": "2024-10-10",
+      "book": 9,
+      "user": 2
+    }
+  },
+  {
+    "model": "borrowings.borrowing",
+    "pk": 5,
+    "fields": {
+      "borrow_date": "2024-10-07",
+      "expected_return_date": "2024-10-13",
+      "actual_return_date": "2024-10-19",
+      "book": 7,
+      "user": 3
+    }
+  },
+  {
+    "model": "borrowings.borrowing",
+    "pk": 6,
+    "fields": {
+      "borrow_date": "2024-10-07",
+      "expected_return_date": "2024-10-13",
+      "actual_return_date": "2024-10-19",
+      "book": 7,
+      "user": 3
+    }
+  },
+  {
+    "model": "borrowings.borrowing",
+    "pk": 7,
+    "fields": {
+      "borrow_date": "2024-10-19",
+      "expected_return_date": "2024-10-25",
+      "actual_return_date": "2024-10-20",
+      "book": 1,
+      "user": 2
+    }
+  },
+  {
+    "model": "borrowings.borrowing",
+    "pk": 8,
+    "fields": {
+      "borrow_date": "2024-10-20",
+      "expected_return_date": "2024-10-21",
+      "actual_return_date": "2024-10-20",
+      "book": 1,
+      "user": 2
+    }
+  },
+  {
+    "model": "borrowings.borrowing",
+    "pk": 9,
+    "fields": {
+      "borrow_date": "2024-10-20",
+      "expected_return_date": "2024-10-22",
+      "actual_return_date": null,
+      "book": 4,
+      "user": 1
+    }
+  },
+  {
+    "model": "borrowings.borrowing",
+    "pk": 10,
+    "fields": {
+      "borrow_date": "2024-10-20",
+      "expected_return_date": "2024-10-21",
+      "actual_return_date": null,
+      "book": 5,
+      "user": 4
+    }
+  },
+  {
+    "model": "borrowings.borrowing",
+    "pk": 11,
+    "fields": {
+      "borrow_date": "2024-10-21",
+      "expected_return_date": "2024-10-27",
+      "actual_return_date": null,
+      "book": 8,
+      "user": 4
+    }
+  },
+  {
+    "model": "payments.payment",
+    "pk": 1,
+    "fields": {
+      "status": "PAID",
+      "type": "PAYMENT",
+      "borrowing": 1,
+      "session_url": "https://checkout.stripe.com/c/pay/cs_test_a1v1MZDT9XaxcDgR6TyhrdFWFcySklMVvSf8LnkQ8XGw8WzM9ZHn17AqrR#fidkdWxOYHwnPyd1blpxYHZxWjA0VER9ZHVPcVN%2FdzBQXUZRaHBMS3ZzaGNrQTJEN0xob25PMmR0RjAxaVU9an9KTTNJTjVTM1Z0QU1JV2xPTFZqZkBqfHxBbHdOPURnRGRzc2dTVzxQc3xINTVCMH0xQGliYScpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl",
+      "session_id": "cs_test_a1v1MZDT9XaxcDgR6TyhrdFWFcySklMVvSf8LnkQ8XGw8WzM9ZHn17AqrR",
+      "money_to_pay": "4.50"
+    }
+  },
+  {
+    "model": "payments.payment",
+    "pk": 2,
+    "fields": {
+      "status": "PAID",
+      "type": "PAYMENT",
+      "borrowing": 2,
+      "session_url": "https://checkout.stripe.com/c/pay/cs_test_a14hufZMYB9rPoWAkaARQemQ8dAcgRt6tTqxrjYHsEa1TZvjcIz1acGtq6#fidkdWxOYHwnPyd1blpxYHZxWjA0VER9ZHVPcVN%2FdzBQXUZRaHBMS3ZzaGNrQTJEN0xob25PMmR0RjAxaVU9an9KTTNJTjVTM1Z0QU1JV2xPTFZqZkBqfHxBbHdOPURnRGRzc2dTVzxQc3xINTVCMH0xQGliYScpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl",
+      "session_id": "cs_test_a14hufZMYB9rPoWAkaARQemQ8dAcgRt6tTqxrjYHsEa1TZvjcIz1acGtq6",
+      "money_to_pay": "3.90"
+    }
+  },
+  {
+    "model": "payments.payment",
+    "pk": 3,
+    "fields": {
+      "status": "PAID",
+      "type": "PAYMENT",
+      "borrowing": 3,
+      "session_url": "https://checkout.stripe.com/c/pay/cs_test_a1sN7eSvHEcbJ3fbRzNNFtESnXL5ij490l16RA6sAIgpoZvcfw8radIDWD#fidkdWxOYHwnPyd1blpxYHZxWjA0VER9ZHVPcVN%2FdzBQXUZRaHBMS3ZzaGNrQTJEN0xob25PMmR0RjAxaVU9an9KTTNJTjVTM1Z0QU1JV2xPTFZqZkBqfHxBbHdOPURnRGRzc2dTVzxQc3xINTVCMH0xQGliYScpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl",
+      "session_id": "cs_test_a1sN7eSvHEcbJ3fbRzNNFtESnXL5ij490l16RA6sAIgpoZvcfw8radIDWD",
+      "money_to_pay": "4.55"
+    }
+  },
+  {
+    "model": "payments.payment",
+    "pk": 4,
+    "fields": {
+      "status": "PAID",
+      "type": "PAYMENT",
+      "borrowing": 4,
+      "session_url": "https://checkout.stripe.com/c/pay/cs_test_a16SVDc3MrZgFHCcX46kiEMDmUFIuXvHiuAPZivovvk5gFRGNcC5yIcAva#fidkdWxOYHwnPyd1blpxYHZxWjA0VER9ZHVPcVN%2FdzBQXUZRaHBMS3ZzaGNrQTJEN0xob25PMmR0RjAxaVU9an9KTTNJTjVTM1Z0QU1JV2xPTFZqZkBqfHxBbHdOPURnRGRzc2dTVzxQc3xINTVCMH0xQGliYScpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl",
+      "session_id": "cs_test_a16SVDc3MrZgFHCcX46kiEMDmUFIuXvHiuAPZivovvk5gFRGNcC5yIcAva",
+      "money_to_pay": "3.60"
+    }
+  },
+  {
+    "model": "payments.payment",
+    "pk": 5,
+    "fields": {
+      "status": "PAID",
+      "type": "PAYMENT",
+      "borrowing": 5,
+      "session_url": "https://checkout.stripe.com/c/pay/cs_test_a1PdVyvkjERBxeJsdgZ4Cyo1oplBU5OxQOleqNBoS4P7eqY1HNzHWNoPfQ#fidkdWxOYHwnPyd1blpxYHZxWjA0VER9ZHVPcVN%2FdzBQXUZRaHBMS3ZzaGNrQTJEN0xob25PMmR0RjAxaVU9an9KTTNJTjVTM1Z0QU1JV2xPTFZqZkBqfHxBbHdOPURnRGRzc2dTVzxQc3xINTVCMH0xQGliYScpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl",
+      "session_id": "cs_test_a1PdVyvkjERBxeJsdgZ4Cyo1oplBU5OxQOleqNBoS4P7eqY1HNzHWNoPfQ",
+      "money_to_pay": "4.20"
+    }
+  },
+  {
+    "model": "payments.payment",
+    "pk": 6,
+    "fields": {
+      "status": "PAID",
+      "type": "FINE",
+      "borrowing": 5,
+      "session_url": "https://checkout.stripe.com/c/pay/cs_test_a1kcHwX9NWzBRDHlpq4Qzpm2QXA2qlAPutIgUpn9XRN5oA0IkvYEP89isi#fidkdWxOYHwnPyd1blpxYHZxWjA0VER9ZHVPcVN%2FdzBQXUZRaHBMS3ZzaGNrQTJEN0xob25PMmR0RjAxaVU9an9KTTNJTjVTM1Z0QU1JV2xPTFZqZkBqfHxBbHdOPURnRGRzc2dTVzxQc3xINTVCMH0xQGliYScpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl",
+      "session_id": "cs_test_a1kcHwX9NWzBRDHlpq4Qzpm2QXA2qlAPutIgUpn9XRN5oA0IkvYEP89isi",
+      "money_to_pay": "8.40"
+    }
+  },
+  {
+    "model": "payments.payment",
+    "pk": 7,
+    "fields": {
+      "status": "PAID",
+      "type": "PAYMENT",
+      "borrowing": 6,
+      "session_url": "https://checkout.stripe.com/c/pay/cs_test_a1Qdgzzpk0pRbErAAVgqbpkG1XW7Szcx3BYI10IhJJUOFSgtUGs5FuxEnJ#fidkdWxOYHwnPyd1blpxYHZxWjA0VER9ZHVPcVN%2FdzBQXUZRaHBMS3ZzaGNrQTJEN0xob25PMmR0RjAxaVU9an9KTTNJTjVTM1Z0QU1JV2xPTFZqZkBqfHxBbHdOPURnRGRzc2dTVzxQc3xINTVCMH0xQGliYScpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl",
+      "session_id": "cs_test_a1Qdgzzpk0pRbErAAVgqbpkG1XW7Szcx3BYI10IhJJUOFSgtUGs5FuxEnJ",
+      "money_to_pay": "4.20"
+    }
+  },
+  {
+    "model": "payments.payment",
+    "pk": 8,
+    "fields": {
+      "status": "PAID",
+      "type": "FINE",
+      "borrowing": 6,
+      "session_url": "https://checkout.stripe.com/c/pay/cs_test_a15i3PHLuHx0cMVJLh4QXNFa7PvUEcpPIT3bmWfyMpataOOfz8yoE9WM5L#fidkdWxOYHwnPyd1blpxYHZxWjA0VER9ZHVPcVN%2FdzBQXUZRaHBMS3ZzaGNrQTJEN0xob25PMmR0RjAxaVU9an9KTTNJTjVTM1Z0QU1JV2xPTFZqZkBqfHxBbHdOPURnRGRzc2dTVzxQc3xINTVCMH0xQGliYScpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl",
+      "session_id": "cs_test_a15i3PHLuHx0cMVJLh4QXNFa7PvUEcpPIT3bmWfyMpataOOfz8yoE9WM5L",
+      "money_to_pay": "8.40"
+    }
+  },
+  {
+    "model": "payments.payment",
+    "pk": 9,
+    "fields": {
+      "status": "PENDING",
+      "type": "PAYMENT",
+      "borrowing": 9,
+      "session_url": "https://checkout.stripe.com/c/pay/cs_test_a1AN3QGwbVyJoVFBVyKdUkFsyMM4PRcB3vNKG3e72x6y0J31aq7xxf1B6P#fidpamZkaWAnPydgaycpJ2R1bE5gfCc%2FJ3VuWnFgdnFaMDRURH1kdU9xU393MFBdRlFocExLdnNoY2tBMkQ3TGhvbk8yZHRGMDFpVT1qf0pNM0lONVMzVnRBTUlXbE9MVmpmQGp8fEFsd049RGdEZHNzZ1NXPFBzfEg1NUIwfTFAaWJhJyknY3dqaFZgd3Ngdyc%2FcXdwYCknaWR8anBxUXx1YCc%2FJ3Zsa2JpYFpscWBoJyknYGtkZ2lgVWlkZmBtamlhYHd2Jz9xd3BgeCUl",
+      "session_id": "cs_test_a1AN3QGwbVyJoVFBVyKdUkFsyMM4PRcB3vNKG3e72x6y0J31aq7xxf1B6P",
+      "money_to_pay": "1.30"
+    }
+  },
+  {
+    "model": "payments.payment",
+    "pk": 10,
+    "fields": {
+      "status": "PAID",
+      "type": "PAYMENT",
+      "borrowing": 10,
+      "session_url": "https://checkout.stripe.com/c/pay/cs_test_a1sYEMghkRkK5A4nxB9ajsSFU5ckI0PIMfWZniZZQCYvw9XC0nmeGbsMIp#fidpamZkaWAnPydgaycpJ2R1bE5gfCc%2FJ3VuWnFgdnFaMDRURH1kdU9xU393MFBdRlFocExLdnNoY2tBMkQ3TGhvbk8yZHRGMDFpVT1qf0pNM0lONVMzVnRBTUlXbE9MVmpmQGp8fEFsd049RGdEZHNzZ1NXPFBzfEg1NUIwfTFAaWJhJyknY3dqaFZgd3Ngdyc%2FcXdwYCknaWR8anBxUXx1YCc%2FJ3Zsa2JpYFpscWBoJyknYGtkZ2lgVWlkZmBtamlhYHd2Jz9xd3BgeCUl",
+      "session_id": "cs_test_a1sYEMghkRkK5A4nxB9ajsSFU5ckI0PIMfWZniZZQCYvw9XC0nmeGbsMIp",
+      "money_to_pay": "0.80"
+    }
+  },
+  {
+    "model": "payments.payment",
+    "pk": 11,
+    "fields": {
+      "status": "PENDING",
+      "type": "PAYMENT",
+      "borrowing": 11,
+      "session_url": "https://checkout.stripe.com/c/pay/cs_test_a1TOujpPRQKmxAtZ46hstqB3fGlB4eN1okId0zFMXr8BBlNtgWIMbXZGU4#fidpamZkaWAnPydgaycpJ2R1bE5gfCc%2FJ3VuWnFgdnFaMDRURH1kdU9xU393MFBdRlFocExLdnNoY2tBMkQ3TGhvbk8yZHRGMDFpVT1qf0pNM0lONVMzVnRBTUlXbE9MVmpmQGp8fEFsd049RGdEZHNzZ1NXPFBzfEg1NUIwfTFAaWJhJyknY3dqaFZgd3Ngdyc%2FcXdwYCknaWR8anBxUXx1YCc%2FJ3Zsa2JpYFpscWBoJyknYGtkZ2lgVWlkZmBtamlhYHd2Jz9xd3BgeCUl",
+      "session_id": "cs_test_a1TOujpPRQKmxAtZ46hstqB3fGlB4eN1okId0zFMXr8BBlNtgWIMbXZGU4",
+      "money_to_pay": "3.30"
+    }
+  }
+]
